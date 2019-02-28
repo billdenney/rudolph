@@ -5,7 +5,8 @@ library('rJava')
 # Initialize the JVM and add to CLASSPATH
 .jinit(parameters = getOption('java.parameters'))
 # .jaddClassPath('/usr/local/lib/antlr-4.7.2-complete.jar')
-jar_class_path <- '/Users/ericchow/IdeaProjects/RudolphElf/out/artifacts/RudolphElf_jar/RudolphElf.jar'
+project_dir <- dirname(sys.frame(1)$ofile)
+jar_class_path <- paste(project_dir, 'RudolphElf.jar', sep='/')
 .jaddClassPath(jar_class_path)
 
 # Create new instance of antlr tool
@@ -13,7 +14,7 @@ jar_class_path <- '/Users/ericchow/IdeaProjects/RudolphElf/out/artifacts/Rudolph
 wunorse <- .jnew('org.rudolph.elf.Wunorse')
 
 # Working directory
-wd <- '/Users/ericchow/rudolph_data'
+wd <- project_dir
 
 # Call antlr on grammar file
 grammar_path <- paste(wd, 'Hello.g4', sep='/')
