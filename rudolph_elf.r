@@ -17,7 +17,7 @@ wunorse <- .jnew('org.rudolph.elf.Wunorse')
 wd <- project_dir
 
 # Call antlr on grammar file
-grammar_path <- paste(wd, 'Hello.g4', sep='/')
+grammar_path <- paste(wd, 'Chat.g4', sep='/')
 
 # Generate java files for parser and lexer
 print('start parser/lexer generation')
@@ -26,7 +26,7 @@ print('done parser/lexer generation')
 
 # Compile java files for parser and lexer
 print('start parser/lexer compilation')
-pl_path <- paste(wd, 'Hello*.java', sep='/')
+pl_path <- paste(wd, 'Chat*.java', sep='/')
 jar_class_path_arg <- paste('"', jar_class_path, '"', sep='')
 system(paste('javac', '-cp', jar_class_path_arg, pl_path, sep=' '))
 print('done parser/lexer compilation')
