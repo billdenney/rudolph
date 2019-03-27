@@ -19,7 +19,9 @@ RudolphElf <- setClass(
     "RudolphElf", 
     slots = list(
         grammarFile="character",
-        rootPackageDir="character"
+        rootPackageDir="character",
+        antlrFilePath="character",
+        jarClassPath="character"
         )
     )
 
@@ -39,16 +41,17 @@ setMethod(
         .Object <- callNextMethod()
         .Object@grammarFile = grammarFile
         .Object@rootPackageDir = getRootPackageDir(.Object)
+        .Object@antlrFilePath = getAntlrFilePath(.Object)
 
         validateFileInput(.Object)
         
         # importing wnorse anltr wrapper
-        jar_class_path <- system.file(
+        .Object@jarClassPath <- system.file(
             "inst", 
             "RudolphElf.jar", 
             package="rudolph"
         )
-        .jaddClassPath(jar_class_path)
+        .jaddClassPath(.Object@jarClassPath)
         
         # wunorse is our light wrapper around antlr
         # it prevents antlr from crashing on import
@@ -58,14 +61,26 @@ setMethod(
         .jcall(wunorse, 'V', 'main', .jarray(c(.Object@grammarFile)))
         print(paste(
             'successfully created parser/lexer files in ', 
-            .Object@rootPackageDir,
-            '/inst/',
+            .Object@antlrFilePath,
             sep=""
             ))
         return(.Object)
     }
 )
-
+#' getAntlrFilePath
+#'
+#' get the antlerFilePath parameter to the absolute path of where antlr generates 
+# the lexer/parser/tokens
+setGeneric(name="getAntlrFilePath", def=function(obj) {
+    standardGeneric("getAntlrFilePath")
+})
+setMethod(
+    "getAntlrFilePath",
+    "RudolphElf",
+    function(self) {
+        return(paste(getwd(), 'inst/', sep='/'))
+    }
+)
 #' validateFileInput
 #'
 #' Checks to see if the file extension for inputted grammar is '.g4'
@@ -91,12 +106,12 @@ setMethod(
     "getRootPackageDir",
     "RudolphElf",
     function(self) {
-        base_path = system.file(package="rudolph")
+        basePath = system.file(package="rudolph")
         BASE_PATH_DIR = '/inst/'
-        end_length = nchar(base_path)
+        endLength = nchar(basePath)
         # system.file root includes inst/. we are going to remove that directory
         # so that we get /rudolph as the base path
-        return(substr(base_path, 0, end_length-(nchar(BASE_PATH_DIR)-1)))
+        return(substr(basePath, 0, endLength-(nchar(BASE_PATH_DIR)-1)))
     }
 )
         
@@ -110,15 +125,15 @@ setMethod(
     "validateG4Extension",
     "RudolphElf",
     function(self) {
-        file_extension = substr(
+        fileExtension = substr(
             self@grammarFile, 
             nchar(self@grammarFile) - 2,
             nchar(self@grammarFile)
         )
-        if (file_extension != '.g4') {
+        if (fileExtension != '.g4') {
             stop(paste(
                 "antlr grammar files must have a .g4 extension. You supplied a '", 
-                file_extension,
+                fileExtension,
                 "'"
                 )
             )
@@ -135,9 +150,26 @@ setMethod(
     "validateFileExists",
     "RudolphElf",
     function(self) {
-        abs_path = paste(self@rootPackageDir, self@grammarFile, sep='/')
-        if (!file_test("-f", abs_path)) {
-            stop(paste("could not find file: ", abs_path, sep=''))
+        absPath = paste(self@rootPackageDir, self@grammarFile, sep='/')
+        if (!file_test("-f", absPath)) {
+            stop(paste("could not find file: ", absPath, sep=''))
         }
+    }
+)
+#' compile
+#'
+#' compiles antlr java files
+setGeneric(name="compile", def=function(obj) {
+    standardGeneric("compile")
+})
+setMethod(
+    "compile",
+    "RudolphElf",
+    function(self) {
+        print('start parser/lexer compilation')
+        pl_path <- paste(self@antlrFilePath, 'Chat*.java', sep='/')
+        jar_class_path_arg <- paste('"', self@jarClassPath, '"', sep='')
+        system(paste('javac', '-cp', jar_class_path_arg, pl_path, sep=' '))
+        print('done parser/lexer compilation')
     }
 )
