@@ -13,8 +13,19 @@ jar_class_path <- paste(project_dir, 'Rudolph.jar', sep='/')
 # Create new instance of antlr tool
 rudolph <- .jnew('org.rudolph.rudolph.Rudolph', c('Chat', 'chat'))
 
+# Input text
 input_text <- 'john SAYS: hello @michael this will not work\n'
-print(.jcall(rudolph, 'S', 'process', input_text))
+
+# Output JSON
+ast_json <- .jcall(rudolph, 'S', 'process', input_text)
+
+print(ast_json)
+
+library('jsonlite')
+
+ast_r <- parse_json(ast_json)
+
+print(ast_r)
 
 # output_name <-
 #   list(
