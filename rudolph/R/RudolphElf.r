@@ -37,8 +37,9 @@ setMethod(
     "RudolphElf",
     function(.Object, grammarFile=character(0)) {
         .Object <- callNextMethod()
-        .Object@grammarFile=grammarFile
-        setRootPackageDir(.Object)
+        .Object@grammarFile = grammarFile
+        .Object@rootPackageDir = getRootPackageDir(.Object)
+
         validateFileInput(.Object)
         
         # importing wnorse anltr wrapper
@@ -55,7 +56,11 @@ setMethod(
 
         print('start parser/lexer generation')
         .jcall(wunorse, 'V', 'main', .jarray(c(.Object@grammarFile)))
-        print(paste('successfully created parser/lexer files in ', .Object@rootPackageDir))
+        print(paste(
+            'successfully created parser/lexer files in ', 
+            .Object@rootPackageDir,
+            '/inst/'
+            ))
         return(.Object)
     }
 )
@@ -75,14 +80,14 @@ setMethod(
         validateFileExists(self)
     }
 )
-#' setRootPackageDir
-#'
-#' sets rootPackageDir parameter to be the root directory of the rudolph package
-setGeneric(name="setRootPackageDir", def=function(obj) {
-    standardGeneric("setRootPackageDir")
+#' getRootPackageDir
+#' 
+#' returns the string root directory of the rudolph package
+setGeneric(name="getRootPackageDir", def=function(obj) {
+    standardGeneric("getRootPackageDir")
 })
 setMethod(
-    "setRootPackageDir",
+    "getRootPackageDir",
     "RudolphElf",
     function(self) {
         base_path = system.file(package="rudolph")
@@ -90,7 +95,7 @@ setMethod(
         end_length = nchar(base_path)
         # system.file root includes inst/. we are going to remove that directory
         # so that we get /rudolph as the base path
-        self@rootPackageDir = substr(base_path, 0, end_length-(nchar(BASE_PATH_DIR)-1))
+        return(substr(base_path, 0, end_length-(nchar(BASE_PATH_DIR)-1)))
     }
 )
         
