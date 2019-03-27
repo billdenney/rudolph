@@ -18,7 +18,8 @@ library('rJava')
 RudolphElf <- setClass(
     "RudolphElf", 
     slots = list(
-        grammarFile="character"
+        grammarFile="character",
+        rootPackageDir="character"
         )
     )
 
@@ -37,8 +38,8 @@ setMethod(
     function(.Object, grammarFile=character(0)) {
         .Object <- callNextMethod()
         .Object@grammarFile=grammarFile
-
-        validate_file_input(.Object)
+        setRootPackageDir(.Object)
+        validateFileInput(.Object)
         
         # importing wnorse anltr wrapper
         jar_class_path <- system.file(
@@ -54,37 +55,53 @@ setMethod(
 
         print('start parser/lexer generation')
         .jcall(wunorse, 'V', 'main', .jarray(c(.Object@grammarFile)))
-        # print(paste('successfully created parser/lexer files in ', getwd()))
+        print(paste('successfully created parser/lexer files in ', .Object@rootPackageDir))
         return(.Object)
     }
 )
-setGeneric(name="show", def=function(obj) {
-    standardGeneric("show")
+
+#' validateFileInput
+#'
+#' Checks to see if the file extension for inputted grammar is '.g4'
+#' and that the file path supplied exists 
+setGeneric(name="validateFileInput", def=function(obj) {
+    standardGeneric("validateFileInput")
 })
 setMethod(
-    "show",
-          "RudolphElf",
-          function(self) {
-              cat('new alana \n')
-              cat(self@grammarFile, "\n")
-          }
-)
-setGeneric(name="validate_file_input", def=function(obj) {
-    standardGeneric("validate_file_input")
-})
-setMethod(
-    "validate_file_input",
+    "validateFileInput",
     "RudolphElf",
     function(self) {
-        validate_g4_extension(self)
-        validate_file_exists(self)
+        validateG4Extension(self)
+        validateFileExists(self)
     }
 )
-setGeneric(name="validate_g4_extension", def=function(obj) {
-    standardGeneric("validate_g4_extension")
+#' setRootPackageDir
+#'
+#' sets rootPackageDir parameter to be the root directory of the rudolph package
+setGeneric(name="setRootPackageDir", def=function(obj) {
+    standardGeneric("setRootPackageDir")
 })
 setMethod(
-    "validate_g4_extension",
+    "setRootPackageDir",
+    "RudolphElf",
+    function(self) {
+        base_path = system.file(package="rudolph")
+        BASE_PATH_DIR = '/inst/'
+        end_length = nchar(base_path)
+        # system.file root includes inst/. we are going to remove that directory
+        # so that we get /rudolph as the base path
+        self@rootPackageDir = substr(base_path, 0, end_length-(nchar(BASE_PATH_DIR)-1))
+    }
+)
+        
+#' validateG4Extension
+#'
+#' Checks to see if the file extension for parameter grammarFile is '.g4'
+setGeneric(name="validateG4Extension", def=function(obj) {
+    standardGeneric("validateG4Extension")
+})
+setMethod(
+    "validateG4Extension",
     "RudolphElf",
     function(self) {
         file_extension = substr(
@@ -102,20 +119,17 @@ setMethod(
         }
     }
 )
-setGeneric(name="validate_file_exists", def=function(obj) {
-    standardGeneric("validate_file_exists")
+#' validateFileExists
+#'
+#' Checks to see if the file path listed in the parameter grammarFile exists
+setGeneric(name="validateFileExists", def=function(obj) {
+    standardGeneric("validateFileExists")
 })
 setMethod(
-    "validate_file_exists",
+    "validateFileExists",
     "RudolphElf",
     function(self) {
-        base_path = system.file(package="rudolph")
-        BASE_PATH_DIR = '/inst/'
-        end_length = nchar(base_path)
-        # system.file root includes inst/. we are going to remove that directory
-        # so that we get /rudolph as the base path
-        base_path = substr(base_path, 0, end_length-(nchar(BASE_PATH_DIR)-1))
-        abs_path = paste(base_path, self@grammarFile, sep='/')
+        abs_path = paste(self@rootPackageDir, self@grammarFile, sep='/')
         if (!file_test("-f", abs_path)) {
             stop(paste("could not find file: ", abs_path, sep=''))
         }
