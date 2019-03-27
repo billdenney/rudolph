@@ -59,7 +59,8 @@ setMethod(
         print(paste(
             'successfully created parser/lexer files in ', 
             .Object@rootPackageDir,
-            '/inst/'
+            '/inst/',
+            sep=""
             ))
         return(.Object)
     }
