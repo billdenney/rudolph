@@ -13,12 +13,7 @@ source('R/RudolphUtils.R')
 #' chat <- RudolphElf(grammarFile="inst/Chat.g4")
 RudolphElf <- setClass(
     "RudolphElf", 
-    slots=list(
-        grammarFile="character",
-        rootPackageDir="character",
-        antlrFilePath="character",
-        jarClassPath="character"
-        ),
+    slots=list(),
     contains="RudolphUtils"
     )
 
