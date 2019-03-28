@@ -15,10 +15,12 @@ Rudolph <- setClass(
     "Rudolph", 
     slots = list(
         grammarName="character",
+        grammarFile="character",
         rootNode="character",
         antlrFilePath="character",
         jarClassPath="character",
-    )
+        rudolph="S4"
+    ),
     contains='RudolphUtils'
 )
 
@@ -34,27 +36,29 @@ Rudolph <- setClass(
 setMethod(
     "initialize", 
     "Rudolph",
-    function(.Object, grammarFile=character(0)) {
+    function(.Object, grammarFile=character(0), rootNode=character(0)) {
         .Object <- callNextMethod()
         .Object@grammarFile = grammarFile
+        .Object@rootNode = rootNode
+        
         .Object@rootPackageDir = getRootPackageDir(.Object)
         .Object@antlrFilePath = getAntlrFilePath(.Object)
-        
+
         validateFileInput(.Object)
         # importing rudolph anltr wrapper
         .Object@jarClassPath <- system.file(
-            "inst", 
-            "Rudolph.jar", 
+            "inst",
+            "Rudolph.jar",
             package="rudolph"
         )
         .jaddClassPath(.Object@jarClassPath)
-        
-        grammarName = parseGrammarNameFromFile(self)
-        rudolph <- .jnew(
-            'org.rudolph.rudolph.Rudolph', 
+    
+        grammarName = parseGrammarNameFromFile(.Object)
+        .Object@rudolph <- .jnew(
+            'org.rudolph.rudolph.Rudolph',
             c(grammarName, .Object@rootNode)
         )
-        browser()
+
         return(.Object)
     }
 )
@@ -62,13 +66,13 @@ setMethod(
 #'
 #' creates an abstract syntax tree (AST) from a grammar. The AST returned is a
 #' nested list
-setGeneric(name="getAST", def=function(obj) {
+setGeneric(name="getAST", def=function(self, inputText) {
     standardGeneric("getAST")
 })
 setMethod(
     "getAST",
     "Rudolph",
-    function(self, inputText=character(0)) {
+    function(self, inputText) {
         ast_json = .jcall(self@rudolph, 'S', 'process', inputText)
         return(parse_json(ast_json))
     }

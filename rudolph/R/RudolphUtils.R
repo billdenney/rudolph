@@ -15,7 +15,7 @@ RudolphUtils <- setClass(
 #' getRootPackageDir
 #' 
 #' returns the string root directory of the rudolph package
-setGeneric(name="getRootPackageDir", def=function(obj) {
+setGeneric(name="getRootPackageDir", def=function(self) {
     standardGeneric("getRootPackageDir")
 })
 setMethod(
@@ -34,7 +34,7 @@ setMethod(
 #'
 #' get the antlerFilePath parameter to the absolute path of where antlr generates 
 # the lexer/parser/tokens
-setGeneric(name="getAntlrFilePath", def=function(obj) {
+setGeneric(name="getAntlrFilePath", def=function(self) {
     standardGeneric("getAntlrFilePath")
 })
 setMethod(
@@ -48,7 +48,7 @@ setMethod(
 #'
 #' Checks to see if the file extension for inputted grammar is '.g4'
 #' and that the file path supplied exists 
-setGeneric(name="validateFileInput", def=function(obj) {
+setGeneric(name="validateFileInput", def=function(self) {
     standardGeneric("validateFileInput")
 })
 setMethod(
@@ -62,7 +62,7 @@ setMethod(
 #' parseGrammarNameFromFile
 #'
 #' from a filepath, parse out the name of the grammar /inst/Chat.g4 would return Chat
-setGeneric(name="parseGrammarNameFromFile", def=function(obj) {
+setGeneric(name="parseGrammarNameFromFile", def=function(self) {
     standardGeneric("parseGrammarNameFromFile")
 })
 setMethod(
@@ -83,7 +83,7 @@ setMethod(
 #' validateG4Extension
 #'
 #' Checks to see if the file extension for parameter grammarFile is '.g4'
-setGeneric(name="validateG4Extension", def=function(obj) {
+setGeneric(name="validateG4Extension", def=function(self) {
     standardGeneric("validateG4Extension")
 })
 setMethod(
@@ -108,7 +108,7 @@ setMethod(
 #' validateFileExists
 #'
 #' Checks to see if the file path listed in the parameter grammarFile exists
-setGeneric(name="validateFileExists", def=function(obj) {
+setGeneric(name="validateFileExists", def=function(self) {
     standardGeneric("validateFileExists")
 })
 setMethod(

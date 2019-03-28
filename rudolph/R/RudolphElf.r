@@ -68,7 +68,7 @@ setMethod(
 #' compile
 #'
 #' compiles antlr java files
-setGeneric(name="compile", def=function(obj) {
+setGeneric(name="compile", def=function(self) {
     standardGeneric("compile")
 })
 setMethod(
