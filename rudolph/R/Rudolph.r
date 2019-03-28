@@ -1,26 +1,28 @@
-source('R/RudolphUtils.R')
-#' RudolphElf
+options(java.parameters = c('-Xmx500M'))
+library('rJava')
+# Initialize the JVM and add to CLASSPATH
+.jinit(parameters = getOption('java.parameters'))
+
+#' Rudolph
 #'
-#' RudolphElf is the workhorse of this antlr adapter package for R. RudolphElf
-#' expects a .g4 grammar file and then generates the neccesary parser, lexer, and token files
-#' antlr needs to run. It acts in the same way as the antlr4 command line tool: 
-#' `antlr4 <grammar-file-g4>`. The antlr files are created in the user's current
-#' working directory in the file `inst/`
+#' Rudolph is the api that allows users to work with an antlr abstract syntax 
+#' tree in R.
 #' @param grammarFile 
+#' @param rootNode 
 #' @keywords init, initialize
 #' @export
 #' @examples
 #' chat <- RudolphElf(grammarFile="inst/Chat.g4")
+#' rudolph <- .jnew('org.rudolph.rudolph.Rudolph', c('Chat', 'chat'))
 RudolphElf <- setClass(
     "RudolphElf", 
-    slots=list(
-        grammarFile="character",
-        rootPackageDir="character",
+    slots = list(
+        grammarName="character",
+        rootNode="character",
         antlrFilePath="character",
         jarClassPath="character"
-        ),
-    contains="RudolphUtils"
     )
+)
 
 #' Initialization Function
 #'
@@ -39,7 +41,7 @@ setMethod(
         .Object@grammarFile = grammarFile
         .Object@rootPackageDir = getRootPackageDir(.Object)
         .Object@antlrFilePath = getAntlrFilePath(.Object)
-
+        
         validateFileInput(.Object)
         
         # importing wnorse anltr wrapper
@@ -53,32 +55,14 @@ setMethod(
         # wunorse is our light wrapper around antlr
         # it prevents antlr from crashing on import
         wunorse <- .jnew('org.rudolph.elf.Wunorse')
-
+        
         print('start parser/lexer generation')
         .jcall(wunorse, 'V', 'main', .jarray(c(.Object@grammarFile)))
         print(paste(
             'successfully created parser/lexer files in ', 
             .Object@antlrFilePath,
             sep=""
-            ))
+        ))
         return(.Object)
-    }
-)
-
-#' compile
-#'
-#' compiles antlr java files
-setGeneric(name="compile", def=function(obj) {
-    standardGeneric("compile")
-})
-setMethod(
-    "compile",
-    "RudolphElf",
-    function(self) {
-        print('start parser/lexer compilation')
-        pl_path <- paste(self@antlrFilePath, 'Chat*.java', sep='/')
-        jar_class_path_arg <- paste('"', self@jarClassPath, '"', sep='')
-        system(paste('javac', '-cp', jar_class_path_arg, pl_path, sep=' '))
-        print('done parser/lexer compilation')
     }
 )
