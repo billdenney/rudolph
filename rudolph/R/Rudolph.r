@@ -1,8 +1,5 @@
-options(java.parameters = c('-Xmx500M'))
-library('rJava')
-# Initialize the JVM and add to CLASSPATH
-.jinit(parameters = getOption('java.parameters'))
-
+source('R/RudolphUtils.R')
+library('jsonlite')
 #' Rudolph
 #'
 #' Rudolph is the api that allows users to work with an antlr abstract syntax 
@@ -14,14 +11,15 @@ library('rJava')
 #' @examples
 #' chat <- RudolphElf(grammarFile="inst/Chat.g4")
 #' rudolph <- .jnew('org.rudolph.rudolph.Rudolph', c('Chat', 'chat'))
-RudolphElf <- setClass(
-    "RudolphElf", 
+Rudolph <- setClass(
+    "Rudolph", 
     slots = list(
         grammarName="character",
         rootNode="character",
         antlrFilePath="character",
-        jarClassPath="character"
+        jarClassPath="character",
     )
+    contains='RudolphUtils'
 )
 
 #' Initialization Function
@@ -35,7 +33,7 @@ RudolphElf <- setClass(
 #' chat <- RudolphElf(grammarFile="inst/Chat.g4")
 setMethod(
     "initialize", 
-    "RudolphElf",
+    "Rudolph",
     function(.Object, grammarFile=character(0)) {
         .Object <- callNextMethod()
         .Object@grammarFile = grammarFile
@@ -43,26 +41,35 @@ setMethod(
         .Object@antlrFilePath = getAntlrFilePath(.Object)
         
         validateFileInput(.Object)
-        
-        # importing wnorse anltr wrapper
+        # importing rudolph anltr wrapper
         .Object@jarClassPath <- system.file(
             "inst", 
-            "RudolphElf.jar", 
+            "Rudolph.jar", 
             package="rudolph"
         )
         .jaddClassPath(.Object@jarClassPath)
         
-        # wunorse is our light wrapper around antlr
-        # it prevents antlr from crashing on import
-        wunorse <- .jnew('org.rudolph.elf.Wunorse')
-        
-        print('start parser/lexer generation')
-        .jcall(wunorse, 'V', 'main', .jarray(c(.Object@grammarFile)))
-        print(paste(
-            'successfully created parser/lexer files in ', 
-            .Object@antlrFilePath,
-            sep=""
-        ))
+        grammarName = parseGrammarNameFromFile(self)
+        rudolph <- .jnew(
+            'org.rudolph.rudolph.Rudolph', 
+            c(grammarName, .Object@rootNode)
+        )
+        browser()
         return(.Object)
+    }
+)
+#' getAST
+#'
+#' creates an abstract syntax tree (AST) from a grammar. The AST returned is a
+#' nested list
+setGeneric(name="getAST", def=function(obj) {
+    standardGeneric("getAST")
+})
+setMethod(
+    "getAST",
+    "Rudolph",
+    function(self, inputText=character(0)) {
+        ast_json = .jcall(self@rudolph, 'S', 'process', inputText)
+        return(parse_json(ast_json))
     }
 )

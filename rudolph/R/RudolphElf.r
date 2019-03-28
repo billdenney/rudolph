@@ -41,14 +41,14 @@ setMethod(
         .Object@antlrFilePath = getAntlrFilePath(.Object)
 
         validateFileInput(.Object)
-        
+
         # importing wnorse anltr wrapper
         .Object@jarClassPath <- system.file(
             "inst", 
-            "RudolphElf.jar", 
+            "Rudolph.jar", 
             package="rudolph"
         )
-        .jaddClassPath(.Object@jarClassPath)
+        .jaddClassPath(c(.Object@rootPackageDir, .Object@jarClassPath))
         
         # wunorse is our light wrapper around antlr
         # it prevents antlr from crashing on import
@@ -75,9 +75,11 @@ setMethod(
     "compile",
     "RudolphElf",
     function(self) {
+        grammarName = parseGrammarNameFromFile(self)
         print('start parser/lexer compilation')
-        pl_path <- paste(self@antlrFilePath, 'Chat*.java', sep='/')
-        jar_class_path_arg <- paste('"', self@jarClassPath, '"', sep='')
+        grammarFileWildMatch = paste(grammarName, '*.java', sep='')
+        pl_path = paste(self@antlrFilePath, grammarFileWildMatch, sep='/')
+        jar_class_path_arg = paste('"', self@jarClassPath, '"', sep='')
         system(paste('javac', '-cp', jar_class_path_arg, pl_path, sep=' '))
         print('done parser/lexer compilation')
     }
