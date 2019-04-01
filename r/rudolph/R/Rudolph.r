@@ -33,7 +33,7 @@ Rudolph <- setClass(
 #' @keywords init, initialize
 #' @export
 #' @examples
-#' chat <- RudolphElf(grammarFile="inst/Chat.g4")
+#' chat <- Rudolph(grammarFile="inst/Chat.g4")
 setMethod(
     "initialize",
     "Rudolph",

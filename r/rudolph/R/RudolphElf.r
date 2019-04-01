@@ -34,13 +34,13 @@ setMethod(
         .Object@grammarFile = grammarFile
         .Object@rootPackageDir = getRootPackageDir(.Object)
         .Object@antlrFilePath = getAntlrFilePath(.Object)
-
+        
         validateFileInput(.Object)
 
         # importing wnorse anltr wrapper
         .Object@jarClassPath <- system.file(
             "inst", 
-            "Rudolph.jar", 
+            "RudolphElf.jar", 
             package="rudolph"
         )
         .jaddClassPath(c(.Object@rootPackageDir, .Object@jarClassPath))
