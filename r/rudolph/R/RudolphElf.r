@@ -12,10 +12,10 @@ source('R/RudolphUtils.R')
 #' @examples
 #' chat <- RudolphElf(grammarFile="inst/Chat.g4")
 RudolphElf <- setClass(
-    "RudolphElf", 
-    slots=list(),
-    contains="RudolphUtils"
-    )
+	"RudolphElf", 
+	slots=list(),
+	contains="RudolphUtils"
+	)
 
 #' Initialization Function
 #'
@@ -27,55 +27,55 @@ RudolphElf <- setClass(
 #' @examples
 #' chat <- RudolphElf(grammarFile="inst/Chat.g4")
 setMethod(
-    "initialize", 
-    "RudolphElf",
-    function(.Object, grammarFile=character(0)) {
-        .Object <- callNextMethod()
-        .Object@grammarFile = grammarFile
-        .Object@rootPackageDir = getRootPackageDir(.Object)
-        .Object@antlrFilePath = getAntlrFilePath(.Object)
-        
-        validateFileInput(.Object)
+	"initialize", 
+	"RudolphElf",
+	function(.Object, grammarFile=character(0)) {
+		.Object <- callNextMethod()
+		.Object@rootPackageDir = getRootPackageDir(.Object)
+		.Object@grammarFile = paste(.Object@rootPackageDir, grammarFile, sep="/")
+		.Object@antlrFilePath = getAntlrFilePath(.Object)
+		
+		validateFileInput(.Object)
 
-        # importing wnorse anltr wrapper
-        .Object@jarClassPath <- system.file(
-            "inst", 
-            "RudolphElf.jar", 
-            package="rudolph"
-        )
-        .jaddClassPath(c(.Object@rootPackageDir, .Object@jarClassPath))
-        
-        # wunorse is our light wrapper around antlr
-        # it prevents antlr from crashing on import
-        wunorse <- .jnew('org.rudolph.elf.Wunorse')
-
-        print('start parser/lexer generation')
-        .jcall(wunorse, 'V', 'main', .jarray(c(.Object@grammarFile)))
-        print(paste(
-            'successfully created parser/lexer files in ', 
-            .Object@antlrFilePath,
-            sep=""
-            ))
-        return(.Object)
-    }
+		# importing wnorse antlr wrapper
+		.Object@jarClassPath <- system.file(
+			"inst", 
+			"RudolphElf.jar", 
+			package="rudolph"
+		)
+		.jaddClassPath(c(.Object@rootPackageDir, .Object@jarClassPath))
+		
+		# wunorse is our light wrapper around antlr
+		# it prevents antlr from crashing on import
+		wunorse <- .jnew('org.rudolph.elf.Wunorse')
+		
+		print('start parser/lexer generation')
+		.jcall(wunorse, 'V', 'main', .jarray(c(.Object@grammarFile)))
+		print(paste(
+			'successfully created parser/lexer files in ', 
+			.Object@antlrFilePath,
+			sep=""
+		))
+		return(.Object)
+	}
 )
 
 #' compile
 #'
 #' compiles antlr java files
 setGeneric(name="compile", def=function(self) {
-    standardGeneric("compile")
+	standardGeneric("compile")
 })
 setMethod(
-    "compile",
-    "RudolphElf",
-    function(self) {
-        grammarName = parseGrammarNameFromFile(self)
-        print('start parser/lexer compilation')
-        grammarFileWildMatch = paste(grammarName, '*.java', sep='')
-        pl_path = paste(self@antlrFilePath, grammarFileWildMatch, sep='/')
-        jar_class_path_arg = paste('"', self@jarClassPath, '"', sep='')
-        system(paste('javac', '-cp', jar_class_path_arg, pl_path, sep=' '))
-        print('done parser/lexer compilation')
-    }
+	"compile",
+	"RudolphElf",
+	function(self) {
+		grammarName = parseGrammarNameFromFile(self)
+		print('start parser/lexer compilation')
+		grammarFileWildMatch = paste(grammarName, '*.java', sep='')
+		pl_path = paste(self@rootPackageDir, "inst", grammarFileWildMatch, sep='/')
+		jar_class_path_arg = paste('"', self@jarClassPath, '"', sep='')
+		system(paste('javac', '-cp', jar_class_path_arg, pl_path, sep=' '))
+		print('done parser/lexer compilation')
+	}
 )

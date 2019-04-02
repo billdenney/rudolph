@@ -4,14 +4,17 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -33,8 +36,21 @@ public class Rudolph {
 		return process(charStream);
 	}
 
-	public String getVocabulary() {
-		return PRETTY_PRINT_GSON.toJson(vocabulary);
+	public String getGrammar() {
+		return PRETTY_PRINT_GSON.toJson(parseGrammarFile());
+	}
+
+	private Map<String, Object> parseGrammarFile() {
+		Map<String, Object> map = new LinkedHashMap<>();
+
+		try (Stream<String> stream = Files.lines(Paths.get(grammarName + ".g4"))) {
+			stream.forEach(System.out::println);
+		}
+		catch (IOException exception) {
+			System.err.println("Could not open grammar file: " + exception);
+		}
+
+		return map;
 	}
 
 	private Rudolph(String[] args) {
@@ -50,6 +66,8 @@ public class Rudolph {
 	}
 
 	private String initialize() throws Exception {
+		System.out.println(System.getProperty("user.dir"));
+
 		String lexerName = grammarName + "Lexer";
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		Class<? extends Lexer> lexerClass = null;
@@ -86,15 +104,6 @@ public class Rudolph {
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 
 		tokens.fill();
-
-//		for (Token tok : tokens.getTokens()) {
-//			if ( tok instanceof CommonToken ) {
-//				System.out.println(((CommonToken)tok).toString(lexer));
-//			}
-//			else {
-//				System.out.println(tok.toString());
-//			}
-//		}
 
 		parser.setBuildParseTree(true);
 		parser.setTokenStream(tokens);

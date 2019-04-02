@@ -29,9 +29,4 @@ public class Wunorse extends org.antlr.v4.Tool {
         }
         return;
     }
-//    protected void handleArgs() {
-//        super.handleArgs();
-//
-//        return_dont_exit = true;
-//    }
 }
