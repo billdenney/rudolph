@@ -1,4 +1,5 @@
 source('R/RudolphUtils.R')
+
 #' RudolphElf
 #'
 #' RudolphElf is the workhorse of this antlr adapter package for R. RudolphElf
@@ -10,12 +11,15 @@ source('R/RudolphUtils.R')
 #' @keywords init, initialize
 #' @export
 #' @examples
-#' chat <- RudolphElf(grammarFile="inst/Chat.g4")
+#' chat <- RudolphElf(grammarFile="/absolute/path/to/Chat.g4")
 RudolphElf <- setClass(
 	"RudolphElf", 
-	slots=list(),
-	contains="RudolphUtils"
-	)
+	slots = list(
+		classPaths           = "character",
+		destinationDirectory = "character"
+	),
+	contains = "RudolphUtils"
+)
 
 #' Initialization Function
 #'
@@ -25,37 +29,49 @@ RudolphElf <- setClass(
 #' @keywords init, initialize
 #' @export
 #' @examples
-#' chat <- RudolphElf(grammarFile="inst/Chat.g4")
+#' chat <- RudolphElf(grammarFile="/absolute/path/to/Chat.g4")
 setMethod(
 	"initialize", 
 	"RudolphElf",
-	function(.Object, grammarFile=character(0)) {
-		.Object <- callNextMethod()
-		.Object@rootPackageDir = getRootPackageDir(.Object)
-		.Object@grammarFile = paste(.Object@rootPackageDir, grammarFile, sep="/")
-		.Object@antlrFilePath = getAntlrFilePath(.Object)
-		
-		validateFileInput(.Object)
+	function(
+		.Object,
+		destinationDirectory = character(0),
+		grammarFile          = character(0)
+	) {
+		.Object@destinationDirectory = destinationDirectory
+		.Object@grammarFile          = grammarFile
 
-		# importing wnorse antlr wrapper
-		.Object@jarClassPath <- system.file(
-			"inst", 
-			"RudolphElf.jar", 
-			package="rudolph"
+		validateFileInput(.Object)
+		
+		initializeJVM(.Object, workingDirectory = destinationDirectory)
+
+		# add RudolphElf.jar to CLASSPATH
+		.Object@classPaths <- c(
+			destinationDirectory,
+			system.file("inst/java", "RudolphElf.jar", package = "rudolph")
 		)
-		.jaddClassPath(c(.Object@rootPackageDir, .Object@jarClassPath))
+		.jaddClassPath(.Object@classPaths)
 		
 		# wunorse is our light wrapper around antlr
 		# it prevents antlr from crashing on import
-		wunorse <- .jnew('org.rudolph.elf.Wunorse')
+		wunorse <- .jnew("org.rudolph.elf.Wunorse")
 		
-		print('start parser/lexer generation')
-		.jcall(wunorse, 'V', 'main', .jarray(c(.Object@grammarFile)))
+		.jcall(
+			wunorse,
+			"V",
+			"main",
+			.jarray(c(
+				.Object@grammarFile,
+				"-o", destinationDirectory
+			))
+		)
+		
 		print(paste(
-			'successfully created parser/lexer files in ', 
-			.Object@antlrFilePath,
-			sep=""
+			"successfully created parser/lexer files in", 
+			destinationDirectory,
+			sep = " "
 		))
+		
 		return(.Object)
 	}
 )
@@ -63,19 +79,20 @@ setMethod(
 #' compile
 #'
 #' compiles antlr java files
-setGeneric(name="compile", def=function(self) {
+setGeneric(name = "compile", def = function(self) {
 	standardGeneric("compile")
 })
 setMethod(
 	"compile",
 	"RudolphElf",
 	function(self) {
-		grammarName = parseGrammarNameFromFile(self)
-		print('start parser/lexer compilation')
-		grammarFileWildMatch = paste(grammarName, '*.java', sep='')
-		pl_path = paste(self@rootPackageDir, "inst", grammarFileWildMatch, sep='/')
-		jar_class_path_arg = paste('"', self@jarClassPath, '"', sep='')
-		system(paste('javac', '-cp', jar_class_path_arg, pl_path, sep=' '))
-		print('done parser/lexer compilation')
+		grammarName          = parseGrammarNameFromFile(self)
+		grammarFileWildMatch = paste(grammarName, "*.java", sep = "")
+		sourceFiles          = paste(self@destinationDirectory, grammarFileWildMatch, sep = "/")
+		classPathArg         = paste("'", paste(self@classPaths, collapse = ":"), "'", sep = "")
+
+		system(paste("javac", "-cp", classPathArg, sourceFiles, sep = " "))
+
+		print("done parser/lexer compilation")
 	}
 )

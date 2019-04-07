@@ -13,7 +13,7 @@ message				: (emoticon | link | color | mention | WORD | WHITESPACE)+ ;
 name				: WORD WHITESPACE;
 
 command				: (SAYS | SHOUTS) ':' WHITESPACE ;
-					 					
+
 emoticon			: ':' '-'? ')'
 					| ':' '-'? '('
 					;

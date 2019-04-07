@@ -1,5 +1,7 @@
 source('R/RudolphUtils.R')
+
 library('jsonlite')
+
 #' Rudolph
 #'
 #' Rudolph is the api that allows users to work with an antlr abstract syntax
@@ -9,18 +11,19 @@ library('jsonlite')
 #' @keywords init, initialize
 #' @export
 #' @examples
-#' rudolph <- Rudolph(grammarFile="inst/Chat.g4", rootNode='chat')
-#' ast <- getAST(rudolph, 'hi my name is')
-#' rudolph <- .jnew('org.rudolph.rudolph.Rudolph', c('Chat', 'chat'))
+#' rudolph <- Rudolph(
+#' 	grammarFile     = "/absolute/path/to/grammar.g4",
+#' 	rootNode        = "grammarroot",
+#' 	sourceDirectory = "/absolute/path"
+#' )
+#' ast <- getAST(rudolph, "hi my name is")
 Rudolph <- setClass(
 	"Rudolph",
 	slots = list(
-		grammarName="character",
-		grammarFile="character",
-		rootNode="character",
-		antlrFilePath="character",
-		jarClassPath="character",
-		rudolph="jobjRef"
+		grammarFile     = "character",
+		rootNode        = "character",
+		rudolph         = "jobjRef",
+		sourceDirectory = "character"
 	),
 	contains='RudolphUtils'
 )
@@ -33,38 +36,44 @@ Rudolph <- setClass(
 #' @keywords init, initialize
 #' @export
 #' @examples
-#' chat <- Rudolph(grammarFile="inst/Chat.g4")
+#' rudolph <- Rudolph(
+#' 	grammarFile     = "/absolute/path/to/grammar.g4",
+#' 	rootNode        = "grammarroot",
+#' 	sourceDirectory = "/absolute/path"
+#' )
 setMethod(
 	"initialize",
 	"Rudolph",
-	function(.Object, grammarFile=character(0), rootNode=character(0)) {
-		.Object <- callNextMethod()
-
-		.Object@rootPackageDir = getRootPackageDir(.Object)
-		.Object@grammarFile = paste(.Object@rootPackageDir, grammarFile, sep="/")
-		.Object@rootNode = rootNode
-
+	function(
+		.Object,
+		grammarFile     = character(0),
+		rootNode        = character(0),
+		sourceDirectory = character(0)
+	) {
+		# initialize the java virtual machine
+		initializeJVM(.Object, workingDirectory = sourceDirectory)
+		
+		# add Rudolph.jar to CLASSPATH
+		.jaddClassPath(c(
+			sourceDirectory,
+			system.file("inst/java", "Rudolph.jar", package = "rudolph")
+		))
+		
+		# check if grammar file exists
+		.Object@grammarFile = grammarFile
 		validateFileInput(.Object)
 		
-		# importing rudolph antlr wrapper
-		.Object@jarClassPath <- system.file(
-			"inst",
-			"Rudolph.jar",
-			package="rudolph"
-		)
-		.jaddClassPath(c(paste(.Object@rootPackageDir, "inst", sep="/"), .Object@jarClassPath))
-
 		grammarName = parseGrammarNameFromFile(.Object)
-		browser()
 
 		.Object@rudolph <- .jnew(
 			'org.rudolph.rudolph.Rudolph',
-			c(grammarName, .Object@rootNode)
+			c(grammarName, rootNode)
 		)
 
 		return(.Object)
 	}
 )
+
 #' getAST
 #'
 #' creates an abstract syntax tree (AST) from a grammar. The AST returned is a
@@ -80,6 +89,7 @@ setMethod(
 		return(parse_json(ast_json))
 	}
 )
+
 #' getGrammar
 #'
 #' returns the rules of provided grammar. The grammar is returned in

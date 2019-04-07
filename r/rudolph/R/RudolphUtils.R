@@ -1,50 +1,30 @@
 options(java.parameters = c('-Xmx500M'))
 library('rJava')
-# Initialize the JVM and add to CLASSPATH
-# .jinit(parameters = getOption('java.parameters'))
-.onLoad <- function(libraryName, packageName) {
-	setwd(paste(libraryName, packageName, "inst", sep="/"))
-	.jpackage(packageName, lib.loc=libraryName)
-}
 
 RudolphUtils <- setClass(
 	"RudolphUtils", 
 	slots = list(
 		grammarFile="character",
-		rootPackageDir="character",
-		antlrFilePath="character",
-		jarClassPath="character"
+		rootPackageDir="character"
 	)
 )
-#' getRootPackageDir
+#' initializeJVM
 #' 
-#' returns the string root directory of the rudolph package
-setGeneric(name="getRootPackageDir", def=function(self) {
-	standardGeneric("getRootPackageDir")
+#' initializes the JVM
+setGeneric(name="initializeJVM", def=function(self, workingDirectory) {
+	standardGeneric("initializeJVM")
 })
 setMethod(
-	"getRootPackageDir",
+	"initializeJVM",
 	"RudolphUtils",
-	function(self) {
-		# system.file root includes inst/. we are going to remove that directory
-		# so that we get /rudolph as the base path
-		return(dirname(system.file(package="rudolph")))
+	function(self, workingDirectory) {
+		setwd(workingDirectory)
+		# Initialize the JVM
+		.jpackage("rudolph", lib.loc=find.package("rudolph"))
+		return(self)
 	}
 )
-#' getAntlrFilePath
-#'
-#' get the antlerFilePath parameter to the absolute path of where antlr generates 
-# the lexer/parser/tokens
-setGeneric(name="getAntlrFilePath", def=function(self) {
-	standardGeneric("getAntlrFilePath")
-})
-setMethod(
-	"getAntlrFilePath",
-	"RudolphUtils",
-	function(self) {
-		return(paste(system.file(package="rudolph"), 'java', sep='/'))
-	}
-)
+
 #' validateFileInput
 #'
 #' Checks to see if the file extension for inputted grammar is '.g4'
@@ -106,6 +86,7 @@ setMethod(
 		}
 	}
 )
+
 #' validateFileExists
 #'
 #' Checks to see if the file path listed in the parameter grammarFile exists
