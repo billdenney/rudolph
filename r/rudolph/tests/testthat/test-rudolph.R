@@ -12,3 +12,8 @@ test_that("get ast from text input", {
 		}
 	)
 })
+test_that("grammar lookup", {
+    rudolph <- Rudolph(grammarName = "Chat")
+    definition <- grammarLookup(rudolph, 'name')
+    expect_equal( defintion, 'WORD WHITESPACE')
+})

@@ -95,3 +95,18 @@ setMethod(
 		return(parse_json(grammar_json))
 	}
 )
+
+#' grammarLookup
+#' @param ruleName
+#' returns the definition of the lexer or parser
+setGeneric(name="grammarLookup", def=function(self, ruleName) {
+    standardGeneric("grammarLookup")
+})
+setMethod(
+    "getGrammar",
+    "Rudolph",
+    function(self) {
+        grammar_json = .jcall(self@rudolph, 'S', 'getGrammar')
+        return(parse_json(grammar_json))
+    }
+)
