@@ -6,7 +6,7 @@ get_capture_group = function(r, s, group_number){
         paste("\\", group_number, sep=""), 
         regmatches(
             s,
-            gregexpr(r, s)
+            gregexpr(r, s, perl=TRUE)
         )[[1]],
         perl=TRUE
     )
@@ -42,7 +42,7 @@ parse_definition = function(line) {
     return(trim(definition))
 }
 has_terminator = function(line) {
-    terminator_regex = "(;)" # TODO ignore escaped terminators ';'
+    terminator_regex = ";(?!')"
     terminator =  get_capture_group(terminator_regex, line, 1)
     if (is.null(terminator)) {
         return(FALSE)
@@ -118,4 +118,4 @@ grammarLookup = function(filePath, ruleName) {
     close(con)
     print(paste(ruleName, "not found in grammar:", filePath))
 }
-print(grammarLookup("~/Apps/antlr/r/rudolph/inst/Chat.g4", "emoticon"))
+print(grammarLookup("~/Apps/antlr/r/rudolph/inst/Chat.g4", "chat"))
