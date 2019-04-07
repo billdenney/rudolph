@@ -101,7 +101,6 @@ setMethod(
 	"getGrammar",
 	"Rudolph",
 	function(self) {
-		grammar_json = .jcall(self@rudolph, 'S', 'getGrammar')
-		return(parse_json(grammar_json))
+		return()
 	}
 )

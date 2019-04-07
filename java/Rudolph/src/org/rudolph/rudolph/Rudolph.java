@@ -35,11 +35,7 @@ public class Rudolph {
 		CharStream charStream = CharStreams.fromString(textInput);
 		return process(charStream);
 	}
-
-	public String getGrammar() {
-		return PRETTY_PRINT_GSON.toJson(parseGrammarFile());
-	}
-
+	
 	private Map<String, Object> parseGrammarFile() {
 		Map<String, Object> map = new LinkedHashMap<>();
 
