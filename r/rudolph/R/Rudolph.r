@@ -65,9 +65,10 @@
 #' @name Rudolph
 NULL
 
-# Source the utils file
-source('R/RudolphUtils.R')
 library('jsonlite')
+
+# Source the utils file
+source('R/Utils.R')
 
 #' An S4 class to represent an instance of Rudolph.
 #'
@@ -85,8 +86,7 @@ Rudolph <- setClass(
 		rootNode        = "character",
 		rudolph         = "jobjRef",
 		sourceDirectory = "character"
-	),
-	contains='RudolphUtils'
+	)
 )
 
 #' initialize
@@ -115,20 +115,20 @@ setMethod(
 		rootNode        = character(0),
 		sourceDirectory = character(0)
 	) {
+		# Validate grammar file
+		validateFile(grammarFile)
+
 		# Set working directory and initialize the JVM
-		initializeJVM(.Object, workingDirectory = sourceDirectory)
+		initializeJVM(workingDirectory = sourceDirectory)
 		
 		# Add source directory and Rudolph.jar to Java classpath
 		.jaddClassPath(c(
 			sourceDirectory,
 			system.file("inst/java", "Rudolph.jar", package = "rudolph")
 		))
-		
-		# Validate grammar file
-		.Object@grammarFile = grammarFile
-		validateFile(.Object)
-		
-		grammarName = parseGrammarNameFromFile(.Object)
+
+		# Parse out the grammar name
+		grammarName = parseGrammarNameFromFile(grammarFile)
 
 		# Create Rudolph Java instance
 		.Object@rudolph <- .jnew(
@@ -159,6 +159,7 @@ setMethod(
 	"Rudolph",
 	function(self, inputText) {
 		ast_json = .jcall(self@rudolph, 'S', 'process', inputText)
+
 		return(parse_json(ast_json))
 	}
 )

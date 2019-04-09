@@ -1,15 +1,14 @@
 context("elf")
 
+base <- system.file("inst", package = "rudolph")
+
 test_that("initialization works", {
 	expect_error(
 		Elf(
-			destinationDirectory = system.file(
-				"inst",
-				package = "rudolph"
-			),
-			grammarFile = system.file(
-				"inst", "Chat.g4",
-				package = "rudolph"
+			destinationDirectory = base,
+			grammarFile          = paste(
+				base, "Chat.g4",
+				sep = "/"
 			)
 		),
 		NA
@@ -32,13 +31,10 @@ test_that("errors if grammar file is not g4", {
 
 test_that("does compile work", {
 	elf <- Elf(
-		destinationDirectory = system.file(
-			"inst",
-			package = "rudolph"
-		),
-		grammarFile = system.file(
-			"inst", "Chat.g4",
-			package = "rudolph"
+		destinationDirectory = base,
+		grammarFile          = paste(
+			base, "Chat.g4",
+			sep = "/"
 		)
 	)
 
@@ -69,6 +65,19 @@ test_that("does compile work", {
 		)
 	)
 
-	#tear down
-	unlink("inst/", recursive = TRUE)
+	# Tear down
+	file.rename(
+		paste(base, "Chat.g4", sep = "/"),
+		paste(base, "donotdelete", sep = "/")
+	)
+	file.remove(
+		dir(
+			path    = base,
+			pattern = "Chat*"
+		)
+	)
+	file.rename(
+		paste(base, "donotdelete", sep = "/"),
+		paste(base, "Chat.g4", sep = "/")
+	)
 })

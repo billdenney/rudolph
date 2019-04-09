@@ -1,4 +1,5 @@
-source('R/RudolphUtils.R')
+# Source the utils file
+source('R/Utils.R')
 
 #' An S4 class to represent Elf.
 #' 
@@ -14,9 +15,9 @@ Elf <- setClass(
 	slots = list(
 		classPaths           = "character",
 		destinationDirectory = "character",
+		grammarFile          = "character",
 		wunorse              = "jobjRef"
-	),
-	contains = "RudolphUtils"
+	)
 )
 
 #' initialize
@@ -42,23 +43,21 @@ setMethod(
 		destinationDirectory = character(0),
 		grammarFile          = character(0)
 	) {
-		.Object@destinationDirectory = destinationDirectory
-		.Object@grammarFile          = grammarFile
-
-		validateFile(.Object)
+		validateFile(grammarFile)
 		
-		initializeJVM(.Object, workingDirectory = destinationDirectory)
+		initializeJVM(workingDirectory = destinationDirectory)
 
-		# add RudolphElf.jar to CLASSPATH
+		# Add destination directory and RudolphElf.jar to Java classpath
 		.Object@classPaths <- c(
 			destinationDirectory,
 			system.file("inst/java", "RudolphElf.jar", package = "rudolph")
 		)
 		.jaddClassPath(.Object@classPaths)
-		
-		# wunorse is our light wrapper around antlr
-		# it prevents antlr from crashing on import
+
 		.Object@wunorse <- .jnew("org.rudolph.elf.Wunorse")
+
+		.Object@destinationDirectory = destinationDirectory
+		.Object@grammarFile          = grammarFile
 		
 		return(.Object)
 	}
@@ -101,14 +100,10 @@ setMethod(
 	"generate",
 	"Elf",
 	function(self) {
-		.jcall(
-			self@wunorse,
-			"V", "main",
-			.jarray(c(
-				self@grammarFile,
-				"-o", self@destinationDirectory
-			))
-		)
+		.jcall(self@wunorse, "V", "main", .jarray(c(
+			self@grammarFile,
+			"-o", self@destinationDirectory
+		)))
 		
 		print(paste(
 			"Successfully created parser/lexer files in", 
@@ -135,7 +130,7 @@ setMethod(
 	"Elf",
 	function(self) {
 		grammarFileWildMatch = paste(
-			parseGrammarNameFromFile(self), "*.java",
+			parseGrammarNameFromFile(self@grammarFile), "*.java",
 			sep = ""
 		)
 		sourceFiles = paste(
