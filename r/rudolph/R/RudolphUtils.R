@@ -10,7 +10,7 @@ RudolphUtils <- setClass(
 )
 #' initializeJVM
 #' 
-#' initializes the JVM
+#' Sets the working directory and initializes the JVM.
 setGeneric(name="initializeJVM", def=function(self, workingDirectory) {
 	standardGeneric("initializeJVM")
 })
@@ -25,19 +25,41 @@ setMethod(
 	}
 )
 
-#' validateFileInput
+#' validateFile
 #'
-#' Checks to see if the file extension for inputted grammar is '.g4'
-#' and that the file path supplied exists 
-setGeneric(name="validateFileInput", def=function(self) {
-	standardGeneric("validateFileInput")
+#' Checks to see if the file extension for given file is .g4 and that the file
+#' exists.
+setGeneric(name="validateFile", def=function(self) {
+	standardGeneric("validateFile")
 })
 setMethod(
-	"validateFileInput",
+	"validateFile",
 	"RudolphUtils",
 	function(self) {
-		validateG4Extension(self)
-		validateFileExists(self)
+		# Validate file extension
+		fileExtension = substr(
+			self@grammarFile, 
+			nchar(self@grammarFile) - 2,
+			nchar(self@grammarFile)
+		)
+		if (fileExtension != '.g4') {
+			stop("ANTLR grammar files must have a .g4 extension.")
+		}
+		
+		# Validate file existence
+		fileFound = FALSE
+		absPath = paste(self@rootPackageDir, self@grammarFile, sep='/')
+		
+		if (file_test("-f", self@grammarFile)) {
+			fileFound = TRUE
+		}
+		else if (file_test("-f", absPath)) {
+			fileFound = TRUE
+		}
+		
+		if (!fileFound) {
+			stop(paste("File not found:", self@grammarFile, sep=" "))
+		}
 	}
 )
 #' parseGrammarNameFromFile
@@ -55,60 +77,8 @@ setMethod(
 			substr(
 				self@grammarFile, 
 				match, 
-				match+attr(match,"match.length")-4
+				match + attr(match, "match.length") - 4
 			)
 		)
-	}
-)
-
-#' validateG4Extension
-#'
-#' Checks to see if the file extension for parameter grammarFile is '.g4'
-setGeneric(name="validateG4Extension", def=function(self) {
-	standardGeneric("validateG4Extension")
-})
-setMethod(
-	"validateG4Extension",
-	"RudolphUtils",
-	function(self) {
-		fileExtension = substr(
-			self@grammarFile, 
-			nchar(self@grammarFile) - 2,
-			nchar(self@grammarFile)
-		)
-		if (fileExtension != '.g4') {
-			stop(paste(
-				"antlr grammar files must have a .g4 extension. You supplied a '", 
-				fileExtension,
-				"'"
-			)
-			)
-		}
-	}
-)
-
-#' validateFileExists
-#'
-#' Checks to see if the file path listed in the parameter grammarFile exists
-setGeneric(name="validateFileExists", def=function(self) {
-	standardGeneric("validateFileExists")
-})
-setMethod(
-	"validateFileExists",
-	"RudolphUtils",
-	function(self) {
-		fileFound = FALSE
-		absPath = paste(self@rootPackageDir, self@grammarFile, sep='/')
-
-		if (file_test("-f", self@grammarFile)) {
-			fileFound = TRUE
-		}
-		else if (file_test("-f", absPath)) {
-			fileFound = TRUE
-		}
-
-		if (!fileFound) {
-			stop(paste("could not find file: ", self@grammarFile, sep=''))
-		}
 	}
 )
