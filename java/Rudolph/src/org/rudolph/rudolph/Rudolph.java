@@ -4,17 +4,13 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,28 +27,6 @@ public class Rudolph {
 	private String grammarName;
 	private String startRuleName;
 
-	public String process(String textInput) throws Exception {
-		CharStream charStream = CharStreams.fromString(textInput);
-		return process(charStream);
-	}
-
-	public String getGrammar() {
-		return PRETTY_PRINT_GSON.toJson(parseGrammarFile());
-	}
-
-	private Map<String, Object> parseGrammarFile() {
-		Map<String, Object> map = new LinkedHashMap<>();
-
-		try (Stream<String> stream = Files.lines(Paths.get(grammarName + ".g4"))) {
-			stream.forEach(System.out::println);
-		}
-		catch (IOException exception) {
-			System.err.println("Could not open grammar file: " + exception);
-		}
-
-		return map;
-	}
-
 	private Rudolph(String[] args) {
 		grammarName   = args[0];
 		startRuleName = args[1];
@@ -61,7 +35,7 @@ public class Rudolph {
 			initialize();
 		}
 		catch (Exception exception) {
-			System.err.println("Could not initialize Rudolph: " + exception);
+			System.err.println("Could not create new parser/lexer instance: " + exception);
 		}
 	}
 
@@ -97,6 +71,21 @@ public class Rudolph {
 		vocabulary = parser.getVocabulary();
 
 		return "";
+	}
+
+	/**
+	 * Processes string input and returns an abstract syntax tree.
+	 * <p>
+	 * Uses Parser and Lexer classes generated via ANTLR to process the given string
+	 * into an abstract syntax tree.
+	 *
+	 * @exception Exception if the Parser class does not have the given start rule
+	 * @param textInput the string to be processed
+	 * @return String of abstract syntax tree in JSON or "ERROR"
+	 */
+	public String process(String textInput) throws Exception {
+		CharStream charStream = CharStreams.fromString(textInput);
+		return process(charStream);
 	}
 
 	private String process(CharStream input) throws IllegalAccessException, InvocationTargetException {
