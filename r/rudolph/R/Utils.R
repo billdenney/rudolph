@@ -42,7 +42,7 @@ validateFile <- function(grammarFile) {
 #'
 #' Given a file path, parse out the name of the grammar.
 parseGrammarNameFromFile <- function(grammarFile) {
-	match = regexpr("([A-Za-z0-9]*)\\.g4", grammarFile, perl = TRUE)
+	match = regexpr("(\\w+)\\.g4", grammarFile, perl = TRUE)
 
 	return (
 		substr(
@@ -51,4 +51,107 @@ parseGrammarNameFromFile <- function(grammarFile) {
 			match + attr(match, "match.length") - 4
 		)
 	)
+}
+
+# returns string w/o leading or trailing whitespace
+trim <- function(x) { gsub("^\\s+|\\s+$", "", x) }
+
+# returns the specified capture group for a given regex pattern and
+# input string. Returns NULL if match not found
+getCaptureGroup <- function(r, s, group_number) {
+    matches = regmatches(
+        s,
+        gregexpr(r, s, perl=TRUE)
+    )
+    if (length(matches) == 0) {
+        return(NULL)
+    }
+    value = gsub(
+        r, 
+        paste("\\", group_number, sep=""), 
+        matches[[1]],
+        perl=TRUE
+    )
+    if (identical(value, character(0))) {
+        return(NULL)
+    }
+    else {
+        return(value)
+    }
+}
+
+# If the supplied grammar entry matches the supplied rule name
+# returns the rule defintion. If the grammar entry is not for 
+# the specified rule name, returns NULL
+getDefinition <- function(ruleName, line) {
+    ruleName = tolower(trim(ruleName))
+    currentRule = parseRuleName()
+    
+    # could not find match
+    if (is.null(currentRule)) {
+        return(NULL)
+    }
+    
+    if (ruleName == currentRule) {
+        return(parseDefinition(line))
+    }
+    else {
+        return(NULL)
+    }
+    
+}
+
+# for a given grammar entry, parses out the definition 
+parseDefinition <- function(line) {
+    defintionRegex = ":(.*);"
+    definition =  getCaptureGroup(defintionRegex, line, 1)
+    return(trim(definition))
+}
+
+# for a given grammar entry, parses out the rule
+parseRuleName <- function(line) {
+    ruleRegex = "^([a-zA-Z0-9]+)\\s*:"
+    rule = getCaptureGroup(ruleRegex, line, 1)
+    return(tolower(trim(rule)))
+}
+
+# detects whether the ANTLR line is terminated. 
+hasTerminator <- function(line) {
+    terminatorRegex = ";(?!')"
+    terminator =  getCaptureGroup(terminatorRegex, line, 1)
+    if (is.null(terminator)) {
+        return(FALSE)
+    }
+    else {
+        return(TRUE)
+    }
+    
+}
+
+# detects whether the string is the beginning or end of a ANTLR comment
+isComment <- function(line) {
+    commentRegex = '(\\/\\*|\\*\\/)'
+    comment =  getCapture_Group(commentRegex, line, 1)
+    if (is.null(comment)) {
+        return(FALSE)
+    }
+    else {
+        return(TRUE)
+    }
+    
+}
+
+# detects whether the string is entirely whitespace
+isWhitespace <- function(line) {
+    whitespaceRegex = '^(\\s*)$'
+    whitespace =  getCaptureGroup(whitespaceRegex, line, 1)
+    if (identical(line, character(0))) {
+        return(TRUE)
+    }
+    else if (!is.null(whitespace) | (line == "")) {
+        return(TRUE)
+    }
+    else {
+        return(FALSE)
+    }
 }
