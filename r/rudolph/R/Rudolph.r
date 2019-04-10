@@ -117,6 +117,7 @@ setMethod(
 	) {
 		# Validate grammar file
 		validateFile(grammarFile)
+	    .Object@grammarFile = grammarFile
 
 		# Set working directory and initialize the JVM
 		initializeJVM(workingDirectory = sourceDirectory)
@@ -190,7 +191,6 @@ setMethod(
         # returns the rule's definition
         while ( length(line) > 0 ) {
             line = readLines(con, n = 1)
-            
             if (isComment(line)) {
                 commentFlag = !commentFlag
                 next

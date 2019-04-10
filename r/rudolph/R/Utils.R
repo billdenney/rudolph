@@ -85,7 +85,7 @@ getCaptureGroup <- function(r, s, group_number) {
 # the specified rule name, returns NULL
 getDefinition <- function(ruleName, line) {
     ruleName = tolower(trim(ruleName))
-    currentRule = parseRuleName()
+    currentRule = parseRuleName(line)
     
     # could not find match
     if (is.null(currentRule)) {
@@ -105,14 +105,24 @@ getDefinition <- function(ruleName, line) {
 parseDefinition <- function(line) {
     defintionRegex = ":(.*);"
     definition =  getCaptureGroup(defintionRegex, line, 1)
-    return(trim(definition))
+    if (is.null(definition)) {
+        return(NULL)
+    }
+    else {
+        return(trim(definition))
+    }
 }
 
 # for a given grammar entry, parses out the rule
 parseRuleName <- function(line) {
     ruleRegex = "^([a-zA-Z0-9]+)\\s*:"
     rule = getCaptureGroup(ruleRegex, line, 1)
-    return(tolower(trim(rule)))
+    if (is.null(rule)) {
+        return(NULL)
+    }
+    else {
+        return(tolower(trim(rule)))
+    }
 }
 
 # detects whether the ANTLR line is terminated. 
@@ -131,7 +141,7 @@ hasTerminator <- function(line) {
 # detects whether the string is the beginning or end of a ANTLR comment
 isComment <- function(line) {
     commentRegex = '(\\/\\*|\\*\\/)'
-    comment =  getCapture_Group(commentRegex, line, 1)
+    comment =  getCaptureGroup(commentRegex, line, 1)
     if (is.null(comment)) {
         return(FALSE)
     }
