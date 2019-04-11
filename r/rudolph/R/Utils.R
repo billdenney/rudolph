@@ -69,6 +69,7 @@ stripInlineComments <- function(line) {
     if (matchStart == -1) {
         return(line)
     }
+    
     # need to seperately handle the case where the inline comment starts the
     # line. substr(line, 1, 1) still returns the first character. Must 
     # explicitly return whitespace
@@ -77,6 +78,7 @@ stripInlineComments <- function(line) {
     }
     else {
         return(
+            
             # strip from the start of the comment to the end of the line
             substr(
                 line,
@@ -170,7 +172,7 @@ hasTerminator <- function(line) {
 }
 
 # detects whether the string is the beginning or end of a ANTLR comment
-isComment <- function(line) {
+isMultiLineComment <- function(line) {
     commentRegex = '(\\/\\*|\\*\\/)'
     comment =  getCaptureGroup(commentRegex, line, 1)
     if (is.null(comment)) {

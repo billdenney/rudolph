@@ -184,8 +184,8 @@ setMethod(
         lines = c()
         counter = 0
         
-        # commentFlag handles multiline comments /**/
-        commentFlag = FALSE
+        # handles multiline comments /**/
+        multiLineCommentFlag = FALSE
         definition = NULL
         
         filePointer = file(self@grammarFile, "r")
@@ -196,12 +196,12 @@ setMethod(
             line = readLines(filePointer, n = 1)
             line = stripInlineComments(line)
             
-            if (isComment(line)) {
-                commentFlag = !commentFlag
+            if (isMultiLineComment(line)) {
+                multiLineCommentFlag = !multiLineCommentFlag
                 next
             }
             
-            if (commentFlag | isWhitespace(line)) {
+            if (multiLineCommentFlag | isWhitespace(line)) {
                 next
             }
             
