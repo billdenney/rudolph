@@ -16,11 +16,13 @@ command				: (SAYS | SHOUTS) ':' WHITESPACE ;
 
 emoticon			: ':' '-'? ')'
 					| ':' '-'? '('
-					;
+					; // my inline comment
 
 link				: TEXT TEXT ;
 
 color				: '/' WORD '/' message '/';
+
+//just an inline comment
 
 mention				: '@' WORD ;
 

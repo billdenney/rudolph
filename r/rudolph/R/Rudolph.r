@@ -117,7 +117,6 @@ setMethod(
 	) {
 		# Validate grammar file
 		validateFile(grammarFile)
-	    .Object@grammarFile = grammarFile
 
 		# Set working directory and initialize the JVM
 		initializeJVM(workingDirectory = sourceDirectory)
@@ -136,7 +135,8 @@ setMethod(
 			'org.rudolph.rudolph.Rudolph',
 			c(grammarName, rootNode)
 		)
-
+        
+        .Object@grammarFile = grammarFile
 		return(.Object)
 	}
 )
@@ -183,14 +183,19 @@ setMethod(
     function(self, ruleName) {
         lines = c()
         counter = 0
+        
+        # commentFlag handles multiline comments /**/
         commentFlag = FALSE
         definition = NULL
         
-        con = file(self@grammarFile, "r")
+        filePointer = file(self@grammarFile, "r")
+        
         # loops through the grammar file trying to find a specified rule
         # returns the rule's definition
         while ( length(line) > 0 ) {
-            line = readLines(con, n = 1)
+            line = readLines(filePointer, n = 1)
+            line = stripInlineComments(line)
+            
             if (isComment(line)) {
                 commentFlag = !commentFlag
                 next
@@ -204,7 +209,7 @@ setMethod(
                 if (length(lines) > 0) {
                     counter = counter + 1
                     lines[counter] = line
-                    line = paste(lines, collapse = ' ')
+                    line = paste(lines, collapse = " ")
                 }
                 definition = getDefinition(ruleName, line)
                 lines = c()
@@ -215,15 +220,17 @@ setMethod(
                 lines[counter] = trim(line)
                 next
             }
+            
             # return the definition when found
             if (!is.null(definition)) {
-                close(con)
+                close(filePointer)
+                
                 return(definition)
             }
         }
-        close(con)
+        close(filePointer)
         # if we reach the end of the grammar file without finding
         # the rule, throw an error
-        stop(paste(ruleName, "not found in grammar:", self@grammarFile))
+        stop(paste(ruleName, "not found in grammar: ", self@grammarFile))
     }
 )

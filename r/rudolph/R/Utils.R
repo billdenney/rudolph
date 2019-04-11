@@ -56,21 +56,52 @@ parseGrammarNameFromFile <- function(grammarFile) {
 # returns string w/o leading or trailing whitespace
 trim <- function(x) { gsub("^\\s+|\\s+$", "", x) }
 
+# remove inline comments from every line
+stripInlineComments <- function(line) {
+    inlineCommentRegex = "\\s*[\\/]{2}.*$"
+    match = regexpr(
+            inlineCommentRegex,
+            line, 
+            perl = TRUE
+    )
+    matchStart = match[1]
+    
+    if (matchStart == -1) {
+        return(line)
+    }
+    # need to seperately handle the case where the inline comment starts the
+    # line. substr(line, 1, 1) still returns the first character. Must 
+    # explicitly return whitespace
+    else if (matchStart == 1) {
+        return("")
+    }
+    else {
+        return(
+            # strip from the start of the comment to the end of the line
+            substr(
+                line,
+                1, # R index starts at 1
+                matchStart
+            )
+        )
+    }
+}
+
 # returns the specified capture group for a given regex pattern and
 # input string. Returns NULL if match not found
 getCaptureGroup <- function(r, s, group_number) {
     matches = regmatches(
         s,
-        gregexpr(r, s, perl=TRUE)
+        gregexpr(r, s, perl = TRUE)
     )
     if (length(matches) == 0) {
         return(NULL)
     }
     value = gsub(
         r, 
-        paste("\\", group_number, sep=""), 
+        paste("\\", group_number, sep = ""), 
         matches[[1]],
-        perl=TRUE
+        perl = TRUE
     )
     if (identical(value, character(0))) {
         return(NULL)
@@ -115,7 +146,7 @@ parseDefinition <- function(line) {
 
 # for a given grammar entry, parses out the rule
 parseRuleName <- function(line) {
-    ruleRegex = "^([a-zA-Z0-9]+)\\s*:"
+    ruleRegex = "^([\\w]+)\\s*:"
     rule = getCaptureGroup(ruleRegex, line, 1)
     if (is.null(rule)) {
         return(NULL)
@@ -153,7 +184,7 @@ isComment <- function(line) {
 
 # detects whether the string is entirely whitespace
 isWhitespace <- function(line) {
-    whitespaceRegex = '^(\\s*)$'
+    whitespaceRegex = "^(\\s*)$"
     whitespace =  getCaptureGroup(whitespaceRegex, line, 1)
     if (identical(line, character(0))) {
         return(TRUE)

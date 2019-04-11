@@ -24,14 +24,20 @@ test_that("get ast from text input", {
 
 test_that("grammar lookup", {
     rudolph <- Rudolph(
-        				grammarFile     = system.file(
-        				    "inst",
-        				    "Chat.g4", 
-        				    package     = "rudolph"
-        				),
-        				rootNode        = "chat",
-        				sourceDirectory = getwd()
-        			)
+        grammarFile		= system.file(
+            "inst",
+            "Chat.g4",
+            package = "rudolph"
+        ),
+        rootNode		= "chat",
+        sourceDirectory = getwd()
+    )
     definition <- grammarLookup(rudolph, "name")
-    expect_equal( definition, "WORD WHITESPACE")
+    expect_equal(definition, "WORD WHITESPACE")
+    
+    definition <- grammarLookup(rudolph, "mention")
+    expect_equal(definition, "'@' WORD")
+    
+    definition <- grammarLookup(rudolph, "emoticon")
+    expect_equal(definition, "':' '-'? ')' | ':' '-'? '('")
 })
