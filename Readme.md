@@ -39,7 +39,7 @@ rudolph <- Rudolph(
 	rootNode 		= "root",
 	sourceDirectory = "/SOME/DIRECTORY"
 )
-ast <- getAST(rudolph, "")
+ast <- getAST(rudolph, "john SAYS: hello @michael will this work\n")
 print(ast)
 ```
 
