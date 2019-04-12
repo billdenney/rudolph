@@ -152,7 +152,7 @@ setMethod(
 #' \dontrun{
 #' ast <- getAST(rudolph, "text to be parsed")
 #' }
-setGeneric(name="getAST", def=function(self, inputText) {
+setGeneric(name = "getAST", def = function(self, inputText) {
 	standardGeneric("getAST")
 })
 setMethod(
@@ -169,12 +169,12 @@ setMethod(
 #'
 #' Performs a lookup in the grammar file supplied at initialization. For a given
 #' rule, returns the definition.
-#' @param ruleName
+#' @param ruleName Character vector containing name of grammar rule.
 #' @return A string representating a grammar definition (lexer or parser)
 #' \dontrun{
 #' grammarLookup(rudolph, "emoticon")
 #' }
-setGeneric(name="grammarLookup", def=function(self, ruleName) {
+setGeneric(name = "grammarLookup", def = function(self, ruleName) {
 	standardGeneric("grammarLookup")
 })
 setMethod(

@@ -4,7 +4,7 @@ grammar TestGrammar;
  * Parser Rules
  */
 
-testRootNode		: line+ EOF ;
+root				: line+ EOF ;
 
 line				: name command message NEWLINE ;
 
