@@ -63,10 +63,11 @@ rudolph <- Rudolph(
 print(
 	grammarLookup(rudolph, "root")
 )
+```
 
----
-output: [1] "line+ EOF"
-
+Output:
+```
+[1] "line+ EOF"
 ```
 
 ## Lookup in Raw Grammar File
@@ -80,7 +81,7 @@ grammarFilePath = system.file(
 	package = "rudolph"
 )
 
-searchForGrammarRule(grammarFilePath, "emoticon")
+grammarLookup(grammarFilePath, "emoticon")
 ```
 
 ## Only Generating Compiled Parser and Lexer ANTLR Files
