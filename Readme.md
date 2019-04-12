@@ -1,5 +1,7 @@
 # Rudolph
-*Just because Rudolph's ANTLRs R stubby doesn't mean he can't shine the way*
+> *Rudolph's ANTLRs R stubby, but it doesn't mean he can't shine the way*
+
+## Overview
 
 Rudolph generates abstract syntax trees (ASTs) in R from compiled ANTLR
 grammars.
@@ -19,9 +21,11 @@ The most common use of Rudolph is to supply a grammar file and input text.
 Please find working examples for the three most common use cases of Rudolph.
 Each example uses the TestGrammar.g4 file available in the package.
 
-## Generating Abstract Syntax Trees
+## Usage
 
-```
+### Generating Abstract Syntax Trees
+
+```r
 library('rudolph')
 
 grammarFilePath = system.file(
@@ -33,15 +37,15 @@ grammarFilePath = system.file(
 rudolph <- Rudolph(
 	grammarFile 	= grammarFilePath,
 	rootNode 		= "root",
-	sourceDirectory = getwd()
+	sourceDirectory = "/SOME/DIRECTORY"
 )
-ast <- getAST(rudolph, "")
+ast <- getAST(rudolph, "john SAYS: hello @michael will this work\n")
 print(ast)
 ```
 
-## Performing Grammar Rule Lookups
+### Performing Grammar Rule Lookups
 
-```
+```r
 library('rudolph')
 
 grammarFilePath = system.file(
@@ -54,20 +58,21 @@ rudolph <- Rudolph(
 	grammarFile 	= grammarFilePath,
 	rootNode 		= "root",
 	# location of the compiled parser/lexer files
-	sourceDirectory = getwd()
+	sourceDirectory = "/SOME/DIRECTORY"
 )
 print(
 	grammarLookup(rudolph, "root")
 )
+```
 
----
-output: [1] "line+ EOF"
-
+Output:
+```
+[1] "line+ EOF"
 ```
 
 ## Lookup in Raw Grammar File
 
-```
+```r
 library('rudolph')
 
 grammarFilePath = system.file(
@@ -76,12 +81,12 @@ grammarFilePath = system.file(
 	package = "rudolph"
 )
 
-searchForGrammarRule(grammarFilePath, "emoticon")
+grammarLookup(grammarFilePath, "emoticon")
 ```
 
 ## Only Generating Compiled Parser and Lexer ANTLR Files
 
-```
+```r
 library('rudolph')
 
 grammarFilePath = system.file(
@@ -90,20 +95,17 @@ grammarFilePath = system.file(
 	package = "rudolph"
 )
 elf <- Elf(
-	# where to save the generated compiled parser/lexter files
-	destinationDirectory = getwd(),
+	# where to save the generated compiled parser/lexer files
+	destinationDirectory = "/SOME/DIRECTORY",
 	grammarFile          = grammarFilePath
 )
-generate(elf)
-compile(elf)
+generateAndCompile(elf)
+```
 
----
-output:
-> generate(elf)
-[1] "Successfully created parser/lexer files in ~/YOUR/DIRECTORY"
-
-> compile(elf)
+Output:
+```
+[1] "Successfully created parser/lexer files in /SOME/DIRECTORY"
 [1] "Parser/lexer compilation complete"
 ```
 
-Enjoy!
+Enjoy! 🦌

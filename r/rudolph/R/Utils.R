@@ -195,6 +195,8 @@ isWhitespace <- function(line) {
 		return(FALSE)
 	}
 }
+
+# query raw grammar file for grammar rule definition
 searchForGrammarRule <- function(grammarFile, ruleName) {
 	lines = c()
 
