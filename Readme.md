@@ -107,4 +107,4 @@ Output:
 [1] "Parser/lexer compilation complete"
 ```
 
-Enjoy!
+Enjoy! 🦌
