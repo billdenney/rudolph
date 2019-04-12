@@ -1,10 +1,10 @@
-grammar Chat;
+grammar TestGrammar;
 
 /*
  * Parser Rules
  */
 
-chat				: line+ EOF ;
+testRootNode		: line+ EOF ;
 
 line				: name command message NEWLINE ;
 
@@ -16,11 +16,13 @@ command				: (SAYS | SHOUTS) ':' WHITESPACE ;
 
 emoticon			: ':' '-'? ')'
 					| ':' '-'? '('
-					;
+					; // my inline comment
 
 link				: TEXT TEXT ;
 
 color				: '/' WORD '/' message '/';
+
+//just an inline comment
 
 mention				: '@' WORD ;
 

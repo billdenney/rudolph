@@ -7,7 +7,8 @@ test_that("initialization works", {
 		Elf(
 			destinationDirectory = base,
 			grammarFile          = paste(
-				base, "Chat.g4",
+				base,
+				"TestGrammar.g4",
 				sep = "/"
 			)
 		),
@@ -33,7 +34,7 @@ test_that("does compile work", {
 	elf <- Elf(
 		destinationDirectory = base,
 		grammarFile          = paste(
-			base, "Chat.g4",
+			base, "TestGrammar.g4",
 			sep = "/"
 		)
 	)
@@ -51,7 +52,7 @@ test_that("does compile work", {
 	expect_true(
 		file.exists(
 			paste(
-				elf@destinationDirectory, "ChatParser.class",
+				elf@destinationDirectory, "TestGrammarParser.class",
 				sep = "/"
 			)
 		)
@@ -59,7 +60,7 @@ test_that("does compile work", {
 	expect_true(
 		file.exists(
 			paste(
-				elf@destinationDirectory, "ChatLexer.class",
+				elf@destinationDirectory, "TestGrammarLexer.class",
 				sep = "/"
 			)
 		)
@@ -67,17 +68,17 @@ test_that("does compile work", {
 
 	# Tear down
 	file.rename(
-		paste(base, "Chat.g4", sep = "/"),
+		paste(base, "TestGrammar.g4", sep = "/"),
 		paste(base, "donotdelete", sep = "/")
 	)
 	file.remove(
 		dir(
 			path    = base,
-			pattern = "Chat*"
+			pattern = "TestGrammar*"
 		)
 	)
 	file.rename(
 		paste(base, "donotdelete", sep = "/"),
-		paste(base, "Chat.g4", sep = "/")
+		paste(base, "TestGrammar.g4", sep = "/")
 	)
 })

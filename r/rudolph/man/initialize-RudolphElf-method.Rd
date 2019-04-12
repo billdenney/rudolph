@@ -14,7 +14,7 @@
 Set the antlr grammar file
 }
 \examples{
-chat <- new('RudolphElf', grammarFile='Chat.g4')
+chat <- new('RudolphElf', grammarFile='TestGrammar.g4')
 show(chat)
 }
 \keyword{cats}
