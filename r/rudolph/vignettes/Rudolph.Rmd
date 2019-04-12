@@ -13,13 +13,13 @@ The Rudolph R package is a lightweight wrapper around ANTLR. It compiles the sup
 
 ```
 library('rudolph')
-elf <- RudolphElf(grammarFile="inst/Chat.g4", dest="~/")
+elf <- RudolphElf(grammarFile="inst/TestGrammar.g4", dest="~/")
 ```
 
 ```
 library('rudolph')
 
-rudolph <- Rudolph(source="/r/',grammarName="Chat", rootNode="chat")
+rudolph <- Rudolph(source="/r/',grammarName="TestGrammar", rootNode="testRootNode")
 ast <- getAST(rudolph, "")
 ```
 
@@ -37,13 +37,13 @@ Note the various macros within the `vignette` setion of the metadata block above
 
 The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
 
-    output: 
+    output:
       rmarkdown::html_vignette:
         css: mystyles.css
 
 ## Figures
 
-The figure sizes have been customised so that you can easily put two images side-by-side. 
+The figure sizes have been customised so that you can easily put two images side-by-side.
 
 ```{r, fig.show='hold'}
 plot(1:10)

@@ -10,7 +10,7 @@ test_that("get ast from text input", {
         .jnew = function(a, b) return(new("jobjRef")),
         {
             rudolph <- Rudolph(
-                grammarFile     = system.file("inst", "Chat.g4", package = "rudolph"),
+                grammarFile     = system.file("inst", "TestGrammar.g4", package = "rudolph"),
                 rootNode        = "santa",
                 sourceDirectory = getwd()
             )
@@ -26,18 +26,18 @@ test_that("grammar lookup", {
     rudolph <- Rudolph(
         grammarFile		= system.file(
             "inst",
-            "Chat.g4",
+            "TestGrammar.g4",
             package = "rudolph"
         ),
-        rootNode		= "chat",
+        rootNode		= "testRootNode",
         sourceDirectory = getwd()
     )
     definition <- grammarLookup(rudolph, "name")
     expect_equal(definition, "WORD WHITESPACE")
-    
+
     definition <- grammarLookup(rudolph, "mention")
     expect_equal(definition, "'@' WORD")
-    
+
     definition <- grammarLookup(rudolph, "emoticon")
     expect_equal(definition, "':' '-'? ')' | ':' '-'? '('")
 })
