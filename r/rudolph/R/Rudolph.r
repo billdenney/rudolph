@@ -5,40 +5,40 @@
 #' ANTLR Java library. This package allows users to generate compiled ANTLR
 #' parsers and lexers and process a character vector into an AST using the
 #' compiled files.
-#' 
+#'
 #' For more details on ANTLR, see \url{https://github.com/antlr/antlr4}.
-#' 
+#'
 #' @section Classes:
 #' This package provides 2 S4 classes: Elf and Rudolph. Elf is a helper class
 #' responsible for generating and compiling parser and lexer files given a .g4
 #' grammar file. Rudolph is the main class responsible for generating the AST
 #' given a character vector and the compiled parser and lexer files.
-#' 
+#'
 #' Most use cases will not require the use of Elf. However, if using both Elf
 #' and Rudolph, both should be given the same grammar file. The generated
 #' compiled files in the destination directory in Elf should also be the same
 #' files contained in the source directory in Rudolph.
-#' 
+#'
 #' Note that due to the relationship between JVMs and working directories, the
 #' working directory will be set to the given directory in either constructor.
-#' 
+#'
 #' @section Elf functions:
 #' Elf     : Initialization function. Takes in a .g4 grammar file and a
 #' destination directory.
-#' 
+#'
 #' generate: Generates the parser and lexer Java files.
-#' 
+#'
 #' compile : Compiles the parser and lexer Java files.
-#' 
+#'
 #' @section Rudolph functions:
 #' Rudolph      : Initialization function. Takes in a .g4 grammar file, a source
 #' directory, and a root node of the grammar.
-#' 
+#'
 #' getAST       : Given a character vector, returns an AST in nested list
 #' format.
-#' 
+#'
 #' grammarLookup: Given a grammar rule, returns the grammar rule definition.
-#' 
+#'
 #' @section AST format:
 #' The generated AST will be in the following format:
 #' @examples
@@ -60,7 +60,7 @@
 #' 	)
 #' )
 #' }
-#' 
+#'
 #' @docType package
 #' @name Rudolph
 NULL
@@ -120,7 +120,7 @@ setMethod(
 
 		# Set working directory and initialize the JVM
 		initializeJVM(workingDirectory = sourceDirectory)
-		
+
 		# Add source directory and Rudolph.jar to Java classpath
 		.jaddClassPath(c(
 			sourceDirectory,
@@ -131,12 +131,12 @@ setMethod(
 		grammarName = parseGrammarNameFromFile(grammarFile)
 
 		# Create Rudolph Java instance
-        .Object@rudolph <- .jnew(
+		.Object@rudolph <- .jnew(
 			'org.rudolph.rudolph.Rudolph',
 			c(grammarName, rootNode)
 		)
 
-        .Object@grammarFile = grammarFile
+		.Object@grammarFile = grammarFile
 		return(.Object)
 	}
 )
@@ -145,7 +145,7 @@ setMethod(
 #'
 #' Generates an abstract syntax tree (AST) from a grammar. The AST returned is a
 #' nested list.
-#' 
+#'
 #' @param inputText Character vector containing text to be parsed into an AST.
 #' @return A nested list representing \code{inputText} parsed into an AST.
 #' @examples
@@ -166,7 +166,7 @@ setMethod(
 )
 
 #' grammarLookup
-#' 
+#'
 #' Performs a lookup in the grammar file supplied at initialization. For a given
 #' rule, returns the definition.
 #' @param ruleName
@@ -175,66 +175,12 @@ setMethod(
 #' grammarLookup(rudolph, "emoticon")
 #' }
 setGeneric(name="grammarLookup", def=function(self, ruleName) {
-    standardGeneric("grammarLookup")
+	standardGeneric("grammarLookup")
 })
 setMethod(
-    "grammarLookup",
-    "Rudolph",
-    function(self, ruleName) {
-        lines = c()
-        
-        # handles multiline comments /**/ by setting a flag at the opening
-        # comment tag (/*) and skipping every line in the file that is between 
-        # until the closing tag (*/)
-        multiLineCommentFlag = FALSE
-        definition = NULL
-        
-        filePointer = file(self@grammarFile, "r")
-        
-        # loops through the grammar file trying to find a specified rule
-        # returns the rule's definition
-        while (length(line) > 0) {
-
-            line = readLines(filePointer, n = 1)
-            line = stripInlineComments(line)
-            
-            if (isMultiLineComment(line)) {
-                multiLineCommentFlag = !multiLineCommentFlag
-                next
-            }
-            
-            if (multiLineCommentFlag | isWhitespace(line)) {
-                next
-            }
-            
-            # only process a line once you have reached the ANTLR terminator ";"
-            # 
-            if (hasTerminator(line)) {
-                if (length(lines) > 0) {
-                    #append
-                    lines = c(lines, line)
-                    line = paste(lines, collapse = " ")
-                }
-                definition = getDefinition(ruleName, line)
-                lines = list()
-            }
-            else {
-                
-                # append
-                lines = c(lines, trim(line))
-                next
-            }
-            
-            # return the definition when found
-            if (!is.null(definition)) {
-                close(filePointer)
-                
-                return(definition)
-            }
-        }
-        close(filePointer)
-        # if we reach the end of the grammar file without finding
-        # the rule, throw an error
-        stop(paste(ruleName, "not found in grammar:", self@grammarFile))
-    }
+	"grammarLookup",
+	"Rudolph",
+	function(self, ruleName) {
+		searchForGrammarRule(self@grammarFile, ruleName)
+	}
 )
