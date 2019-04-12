@@ -131,11 +131,11 @@ setMethod(
 		grammarName = parseGrammarNameFromFile(grammarFile)
 
 		# Create Rudolph Java instance
-		.Object@rudolph <- .jnew(
+        .Object@rudolph <- .jnew(
 			'org.rudolph.rudolph.Rudolph',
 			c(grammarName, rootNode)
 		)
-        
+
         .Object@grammarFile = grammarFile
 		return(.Object)
 	}
@@ -182,9 +182,10 @@ setMethod(
     "Rudolph",
     function(self, ruleName) {
         lines = c()
-        counter = 0
         
-        # handles multiline comments /**/
+        # handles multiline comments /**/ by setting a flag at the opening
+        # comment tag (/*) and skipping every line in the file that is between 
+        # until the closing tag (*/)
         multiLineCommentFlag = FALSE
         definition = NULL
         
@@ -192,7 +193,8 @@ setMethod(
         
         # loops through the grammar file trying to find a specified rule
         # returns the rule's definition
-        while ( length(line) > 0 ) {
+        while (length(line) > 0) {
+
             line = readLines(filePointer, n = 1)
             line = stripInlineComments(line)
             
@@ -205,19 +207,21 @@ setMethod(
                 next
             }
             
+            # only process a line once you have reached the ANTLR terminator ";"
+            # 
             if (hasTerminator(line)) {
                 if (length(lines) > 0) {
-                    counter = counter + 1
-                    lines[counter] = line
+                    #append
+                    lines = c(lines, line)
                     line = paste(lines, collapse = " ")
                 }
                 definition = getDefinition(ruleName, line)
-                lines = c()
-                counter = 0
+                lines = list()
             }
             else {
-                counter = counter + 1
-                lines[counter] = trim(line)
+                
+                # append
+                lines = c(lines, trim(line))
                 next
             }
             
@@ -231,6 +235,6 @@ setMethod(
         close(filePointer)
         # if we reach the end of the grammar file without finding
         # the rule, throw an error
-        stop(paste(ruleName, "not found in grammar: ", self@grammarFile))
+        stop(paste(ruleName, "not found in grammar:", self@grammarFile))
     }
 )
