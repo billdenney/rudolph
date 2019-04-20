@@ -142,7 +142,31 @@ setMethod(
 			sep = ""
 		)
 		
-		system(paste("javac", "-cp", classPathArg, sourceFiles, sep = " "))
+		result <- capture.output(
+			system(paste("javac", "-cp", classPathArg, sourceFiles, sep = " ")),
+			file = NULL
+		)
+
+		# Check if javac was not found. Different shells produce different error
+		# messages.
+		# Windows CMD produces:
+		#  "'javac' is not recognized as an internal or external command,
+		#  operable program or batch file."
+		# MacOS/Linux (bash) produces:
+		#  "javac: command not found"
+		# In all cases, the word "not" is present.
+		if (
+			!identical(result, character(0))
+			&& grepl("not", result, ignore.case = TRUE)
+		) {
+			stop(
+				paste(
+					"Please ensure JDK is installed and included in your PATH.",
+					result,
+					collapse = " "
+				)
+			)
+		}
 		
 		print("Parser/lexer compilation complete")
 	}

@@ -1,10 +1,12 @@
 Package: rudolph
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Title: Generate abstract syntax trees (ASTs) in R using ANTLR
+Version: 1.0
+Authors@R: person("Bill", "Denney", email = "wdenney@humanpredictions.com", role = c("aut", "cre"))
+Description: The Rudolph package is a light wrapper around a simple implementation of the ANTLR Java library. This package allows users to generate compiled ANTLR parsers and lexers and process a character vector into an AST using the compiled files.
 Depends:
     R (>= 3.1.2)
-License: What license is it under?
+License: TBD
 LazyData: true
+Imports:
+    rJava
 RoxygenNote: 6.1.1
