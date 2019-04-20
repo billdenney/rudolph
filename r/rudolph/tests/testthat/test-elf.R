@@ -2,6 +2,23 @@ context("elf")
 
 base <- system.file("inst", package = "rudolph")
 
+teardown <- function() {
+	file.rename(
+		paste(base, "TestGrammar.g4", sep = "/"),
+		paste(base, "donotdelete", sep = "/")
+	)
+	file.remove(
+		dir(
+			path    = base,
+			pattern = "TestGrammar*"
+		)
+	)
+	file.rename(
+		paste(base, "donotdelete", sep = "/"),
+		paste(base, "TestGrammar.g4", sep = "/")
+	)
+}
+
 test_that("initialization works", {
 	expect_error(
 		Elf(
@@ -28,6 +45,43 @@ test_that("errors if grammar file is not g4", {
 		Elf(grammarFile = "inst/Rudolph.jar"),
 		"ANTLR grammar files must have a .g4 extension"
 	)
+})
+
+test_that("errors if javac is not found", {
+	elf <- Elf(
+		destinationDirectory = base,
+		grammarFile          = paste(
+			base, "TestGrammar.g4",
+			sep = "/"
+		)
+	)
+
+	expect_output(
+		generate(elf),
+		"Successfully created parser/lexer files in .+/rudolph/inst"
+	)
+
+	systemErrors <- c(
+		paste(
+			"'javac' is not recognized as an internal or external command",
+			"operable program or batch file.",
+			sep = " "
+		),
+		"javac: command not found"
+	)
+
+	for (systemError in systemErrors) {
+		with_mock(
+			system = function(a) return(systemError),
+			expect_error(
+				compile(elf),
+				"Please ensure JDK is installed and included in your PATH.*"
+			)
+		)
+	}
+
+	# Tear down
+	teardown()
 })
 
 test_that("does compile work", {
@@ -67,18 +121,5 @@ test_that("does compile work", {
 	)
 
 	# Tear down
-	file.rename(
-		paste(base, "TestGrammar.g4", sep = "/"),
-		paste(base, "donotdelete", sep = "/")
-	)
-	file.remove(
-		dir(
-			path    = base,
-			pattern = "TestGrammar*"
-		)
-	)
-	file.rename(
-		paste(base, "donotdelete", sep = "/"),
-		paste(base, "TestGrammar.g4", sep = "/")
-	)
+	teardown()
 })
