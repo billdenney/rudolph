@@ -21,12 +21,23 @@ The most common use of Rudolph is to supply a grammar file and input text.
 Please find working examples for the three most common use cases of Rudolph.
 Each example uses the TestGrammar.g4 file available in the package.
 
+## Requirements
++ Java Development Kit 8+
+  + `java` and `javac` are both required
++ R version 3.5.2+
+
+## Installation
+Rudolph is available on CRAN:
+```r
+install.packages("rudolph")
+```
+
 ## Usage
 
 ### Generating Abstract Syntax Trees
 
 ```r
-library('rudolph')
+library("rudolph")
 
 grammarFilePath = system.file(
 	"inst",
@@ -39,14 +50,14 @@ rudolph <- Rudolph(
 	rootNode 		= "root",
 	sourceDirectory = "/SOME/DIRECTORY"
 )
-ast <- getAST(rudolph, "john SAYS: hello @michael will this work\n")
+ast <- getAST(rudolph, "santa SAYS: @rudolph with your nose so bright\n")
 print(ast)
 ```
 
 ### Performing Grammar Rule Lookups
 
 ```r
-library('rudolph')
+library("rudolph")
 
 grammarFilePath = system.file(
 	"inst",
@@ -73,7 +84,7 @@ Output:
 ## Lookup in Raw Grammar File
 
 ```r
-library('rudolph')
+library("rudolph")
 
 grammarFilePath = system.file(
 	"inst",
@@ -87,7 +98,7 @@ grammarLookup(grammarFilePath, "emoticon")
 ## Only Generating Compiled Parser and Lexer ANTLR Files
 
 ```r
-library('rudolph')
+library("rudolph")
 
 grammarFilePath = system.file(
 	"inst",
