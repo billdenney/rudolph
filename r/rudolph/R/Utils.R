@@ -4,10 +4,7 @@ library('rJava')
 #' initializeJVM
 #'
 #' Sets the working directory and initializes the JVM.
-initializeJVM <- function(workingDirectory) {
-	# Set the working directory so the jars work properly
-	setwd(workingDirectory)
-
+initializeJVM <- function() {
 	# Initialize the JVM
 	.jpackage("rudolph", lib.loc=find.package("rudolph"))
 }
@@ -25,16 +22,6 @@ validateFile <- function(grammarFile) {
 	)
 	if (fileExtension != '.g4') {
 		stop("ANTLR grammar files must have a .g4 extension.")
-	}
-
-	# Validate file existence
-	fileFound = FALSE
-	if (file_test("-f", grammarFile)) {
-		fileFound = TRUE
-	}
-
-	if (!fileFound) {
-		stop(paste("File not found:", grammarFile, sep=" "))
 	}
 }
 

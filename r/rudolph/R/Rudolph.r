@@ -115,20 +115,22 @@ setMethod(
 		rootNode        = character(0),
 		sourceDirectory = character(0)
 	) {
-		# Validate grammar file
-		validateFile(grammarFile)
+		.Object@grammarFile = normalizePath(grammarFile, mustWork = TRUE)
 
-		# Set working directory and initialize the JVM
-		initializeJVM(workingDirectory = sourceDirectory)
+		# Validate grammar file
+		validateFile(.Object@grammarFile)
+
+		# Initialize the JVM
+		initializeJVM()
 
 		# Add source directory and Rudolph.jar to Java classpath
 		.jaddClassPath(c(
-			sourceDirectory,
+			normalizePath(sourceDirectory, mustWork = TRUE),
 			system.file("inst/java", "Rudolph.jar", package = "rudolph")
 		))
 
 		# Parse out the grammar name
-		grammarName = parseGrammarNameFromFile(grammarFile)
+		grammarName = parseGrammarNameFromFile(.Object@grammarFile)
 
 		# Create Rudolph Java instance
 		.Object@rudolph <- .jnew(
@@ -136,7 +138,6 @@ setMethod(
 			c(grammarName, rootNode)
 		)
 
-		.Object@grammarFile = grammarFile
 		return(.Object)
 	}
 )

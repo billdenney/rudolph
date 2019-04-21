@@ -43,21 +43,29 @@ setMethod(
 		destinationDirectory = character(0),
 		grammarFile          = character(0)
 	) {
-		validateFile(grammarFile)
+		.Object@destinationDirectory = normalizePath(
+			destinationDirectory,
+			mustWork = TRUE
+		)
+		.Object@grammarFile = normalizePath(
+			grammarFile,
+			mustWork = TRUE
+		)
 
-		initializeJVM(workingDirectory = destinationDirectory)
+		# Validate grammar file
+		validateFile(.Object@grammarFile)
+
+		# Initialize the JVM
+		initializeJVM()
 
 		# Add destination directory and RudolphElf.jar to Java classpath
 		.Object@classPaths <- c(
-			destinationDirectory,
+			.Object@destinationDirectory,
 			system.file("inst/java", "RudolphElf.jar", package = "rudolph")
 		)
 		.jaddClassPath(.Object@classPaths)
 
 		.Object@wunorse <- .jnew("org.rudolph.elf.Wunorse")
-
-		.Object@destinationDirectory = destinationDirectory
-		.Object@grammarFile          = grammarFile
 
 		return(.Object)
 	}

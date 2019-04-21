@@ -9,8 +9,9 @@ teardown <- function() {
 	)
 	file.remove(
 		dir(
-			path    = base,
-			pattern = "TestGrammar*"
+			path       = base,
+			pattern    = "TestGrammar*",
+			full.names = TRUE
 		)
 	)
 	file.rename(
@@ -33,16 +34,9 @@ test_that("initialization works", {
 	)
 })
 
-test_that("errors if grammar file doesn't exist", {
-	expect_error(
-		Elf(grammarFile = "nonexistant.g4"),
-		"File not found: +"
-	)
-})
-
 test_that("errors if grammar file is not g4", {
 	expect_error(
-		Elf(grammarFile = "inst/Rudolph.jar"),
+		Elf(grammarFile = paste(base, "java/Rudolph.jar", sep = "/")),
 		"ANTLR grammar files must have a .g4 extension"
 	)
 })
