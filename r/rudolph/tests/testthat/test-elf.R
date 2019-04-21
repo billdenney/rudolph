@@ -67,16 +67,17 @@ test_that("errors if javac is not found", {
 			"operable program or batch file.",
 			sep = " "
 		),
-		"javac: command not found"
+		"javac: command not found",
+		"javac: file not found"
 	)
 
 	for (systemError in systemErrors) {
 		with_mock(
-			system = function(a) return(systemError),
-			expect_error(
-				compile(elf),
-				"Please ensure JDK is installed and included in your PATH.*"
-			)
+			system2 = function(command, args, stderr, stdout) {
+				attr(systemError, "status") <- 2
+				return(systemError)
+			},
+			expect_error(compile(elf), "*")
 		)
 	}
 

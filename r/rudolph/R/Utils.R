@@ -53,6 +53,32 @@ parseGrammarNameFromFile <- function(grammarFile) {
 	)
 }
 
+getErrorInfo <- function(object) {
+	errorMap <- list(
+		file  = "Generated grammar files could not be located",
+		javac = "Please ensure JDK is installed and included in your PATH",
+		none  = "Unknown errors"
+	)
+
+	type <- "none"
+
+	if (grepl("file not found", object[1])) {
+		type <- "file"
+	}
+	# Check if javac was not found. Different shells produce different error
+	# messages.
+	# Windows CMD produces:
+	#  "'javac' is not recognized as an internal or external command,
+	#  operable program or batch file."
+	# MacOS/Linux (bash) produces:
+	#  "javac: command not found"
+	else if (grepl("(?:is not recognized|command not found)", object[1])) {
+		type <- "javac"
+	}
+
+	return(errorMap[type])
+}
+
 # returns string w/o leading or trailing whitespace
 trim <- function(x) { gsub("^\\s+|\\s+$", "", x) }
 

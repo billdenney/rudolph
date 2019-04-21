@@ -2,7 +2,7 @@
 source('R/Utils.R')
 
 #' An S4 class to represent Elf.
-#' 
+#'
 #' @slot classPaths A list of character vectors of Java classpaths.
 #' @slot destinationDirectory A character vector of an absolute path to the
 #' directory where the generated and compiled files should be written to.
@@ -11,7 +11,7 @@ source('R/Utils.R')
 #' @slot wunorse A Java object reference to an instance of
 #' org.rudolph.elf.Wunorse.
 Elf <- setClass(
-	"Elf", 
+	"Elf",
 	slots = list(
 		classPaths           = "character",
 		destinationDirectory = "character",
@@ -36,7 +36,7 @@ Elf <- setClass(
 #' )
 #' }
 setMethod(
-	"initialize", 
+	"initialize",
 	"Elf",
 	function(
 		.Object,
@@ -44,7 +44,7 @@ setMethod(
 		grammarFile          = character(0)
 	) {
 		validateFile(grammarFile)
-		
+
 		initializeJVM(workingDirectory = destinationDirectory)
 
 		# Add destination directory and RudolphElf.jar to Java classpath
@@ -58,7 +58,7 @@ setMethod(
 
 		.Object@destinationDirectory = destinationDirectory
 		.Object@grammarFile          = grammarFile
-		
+
 		return(.Object)
 	}
 )
@@ -66,7 +66,7 @@ setMethod(
 #' generateAndCompile
 #'
 #' Generates and compiles parser/lexer Java files using ANTLR and \code{javac}.
-#' 
+#'
 #' @return Not meaningful.
 #' @examples
 #' \dontrun{
@@ -87,7 +87,7 @@ setMethod(
 #' generate
 #'
 #' Generates parser/lexer Java files using ANTLR.
-#' 
+#'
 #' @return Not meaningful.
 #' @examples
 #' \dontrun{
@@ -104,9 +104,9 @@ setMethod(
 			self@grammarFile,
 			"-o", self@destinationDirectory
 		)))
-		
+
 		print(paste(
-			"Successfully created parser/lexer files in", 
+			"Successfully created parser/lexer files in",
 			self@destinationDirectory,
 			sep = " "
 		))
@@ -116,7 +116,7 @@ setMethod(
 #' compile
 #'
 #' Compiles generated parser/lexer Java files using \code{javac}.
-#' 
+#'
 #' @return Not meaningful.
 #' @examples
 #' \dontrun{
@@ -141,33 +141,27 @@ setMethod(
 			"'", paste(self@classPaths, collapse = ":"), "'",
 			sep = ""
 		)
-		
-		result <- capture.output(
-			system(paste("javac", "-cp", classPathArg, sourceFiles, sep = " ")),
-			file = NULL
+
+		# system2 warning messages are not very useful
+		result <- suppressWarnings(
+			system2(
+				"javac",
+				args   = paste("-cp", classPathArg, sourceFiles, sep = " "),
+				stderr = TRUE,
+				stdout = TRUE
+			)
 		)
 
-		# Check if javac was not found. Different shells produce different error
-		# messages.
-		# Windows CMD produces:
-		#  "'javac' is not recognized as an internal or external command,
-		#  operable program or batch file."
-		# MacOS/Linux (bash) produces:
-		#  "javac: command not found"
-		# In all cases, the word "not" is present.
-		if (
-			!identical(result, character(0))
-			&& grepl("not", result, ignore.case = TRUE)
-		) {
+		if (!identical(result, character(0)) && attr(result, "status") != 0) {
 			stop(
 				paste(
-					"Please ensure JDK is installed and included in your PATH.",
-					result,
-					collapse = " "
+					getErrorInfo(result),
+					paste(result, collapse = "\n"),
+					sep = "\n"
 				)
 			)
 		}
-		
+
 		print("Parser/lexer compilation complete")
 	}
 )
