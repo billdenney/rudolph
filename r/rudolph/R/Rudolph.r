@@ -160,9 +160,11 @@ setMethod(
 	"getAST",
 	"Rudolph",
 	function(self, inputText) {
-		ast_json = .jcall(self@rudolph, 'S', 'process', inputText)
-
-		return(parse_json(ast_json))
+		return(
+			parse_json(
+				.jcall(self@rudolph, returnSig = "S", "process", inputText)
+			)
+		)
 	}
 )
 

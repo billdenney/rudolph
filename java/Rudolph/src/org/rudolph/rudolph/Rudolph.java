@@ -40,8 +40,6 @@ public class Rudolph {
 	}
 
 	private String initialize() throws Exception {
-		System.out.println(System.getProperty("user.dir"));
-
 		String lexerName = grammarName + "Lexer";
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		Class<? extends Lexer> lexerClass = null;
@@ -62,11 +60,15 @@ public class Rudolph {
 
 		Constructor<? extends Lexer> lexerConstructor = lexerClass.getConstructor(CharStream.class);
 		lexer = lexerConstructor.newInstance((CharStream)null);
+		lexer.removeErrorListeners();
+		lexer.addErrorListener(RConsoleErrorListener.INSTANCE);
 
 		String parserName = grammarName + "Parser";
 		parserClass = cl.loadClass(parserName).asSubclass(Parser.class);
 		Constructor<? extends Parser> parserConstructor = parserClass.getConstructor(TokenStream.class);
 		parser = parserConstructor.newInstance((TokenStream)null);
+		parser.removeErrorListeners();
+		parser.addErrorListener(RConsoleErrorListener.INSTANCE);
 
 		vocabulary = parser.getVocabulary();
 
