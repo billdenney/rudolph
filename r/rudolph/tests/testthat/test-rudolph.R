@@ -1,5 +1,7 @@
 context("rudolph")
 
+base <- system.file("inst", package = "rudolph")
+
 test_that("get ast from text input", {
 	expectedOutput <- list(
 		rudolph = list(
@@ -17,13 +19,33 @@ test_that("get ast from text input", {
 				rootNode        = "santa",
 				sourceDirectory = getwd()
 			)
+
+			expect_error(getAST(rudolph), "Must specify text or file")
+			expect_error(
+				getAST(
+					rudolph,
+					file = "doesnotexist.txt"
+				),
+				"'doesnotexist.txt' does not exist"
+			)
+
 			with_mock(
 				.jcall = function(c, returnSig, e, f) {
 					return(
 						'{"rudolph": {"attributes": ["antlrs", "red nose"]}}'
 					)
 				},
-				expect_equal(getAST(rudolph, ""), expectedOutput)
+				{
+					expect_equal(getAST(rudolph, ""), expectedOutput)
+					expect_equal(getAST(rudolph, text = ""), expectedOutput)
+					expect_equal(
+						getAST(
+							rudolph,
+							file = paste0(base, "/TestFile.txt")
+						),
+						expectedOutput
+					)
+				}
 			)
 		}
 	)

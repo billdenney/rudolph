@@ -146,10 +146,13 @@ setMethod(
 #' getAST
 #'
 #' Generates an abstract syntax tree (AST) from a grammar. The AST returned is a
-#' nested list.
+#' nested list. Only one of \code{text} or \code{file} should be specified.
 #'
-#' @param inputText Character vector containing text to be parsed into an AST.
-#' @return A nested list representing \code{inputText} parsed into an AST.
+#' @param text Character vector containing text to be parsed into an AST.
+#' @param file Character vector containing file name, contents of which to be
+#' parsed into an AST.
+#' @return A nested list representing \code{text} or contents of \code{file}
+#' parsed into an AST.
 #' @examples
 #' \dontrun{
 #' ast <- getAST(rudolph, "text to be parsed")
@@ -163,6 +166,9 @@ setMethod(
 	function(self, text, file) {
 		if (missing(text) && missing(file)) {
 			stop("Must specify text or file.")
+		}
+		else if (!(missing(text) || missing(file))) {
+			stop("Either text or file should be specified, not both.")
 		}
 		else if (!missing(file)) {
 			input <- read_file(file)
