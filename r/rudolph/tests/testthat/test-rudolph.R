@@ -51,11 +51,49 @@ test_that("get ast from text input", {
 	)
 })
 
+test_that("pretty print AST", {
+	rudolph <- Rudolph(
+		grammarFile		= system.file(
+			"inst", "TestGrammar.g4",
+			package = "rudolph"
+		),
+		rootNode		= "root",
+		sourceDirectory = getwd()
+	)
+
+	ast <- list(
+		value = list(
+			list(
+				value = list(
+					list(value = 1),
+					list(value = 2)
+				)
+			),
+			list(
+				value = list(
+					list(value = 3),
+					list(
+						value = list(
+							list(value = 4)
+						)
+					)
+				)
+			),
+			list(value = 5),
+			list(value = "<EOF>")
+		)
+	)
+
+	expectedOutput <- "12345"
+
+	expect_error(prettyPrint(rudolph), "Must specify ast")
+	expect_equal(prettyPrint(rudolph, ast), expectedOutput)
+})
+
 test_that("grammar lookup", {
 	rudolph <- Rudolph(
 		grammarFile		= system.file(
-			"inst",
-			"TestGrammar.g4",
+			"inst", "TestGrammar.g4",
 			package = "rudolph"
 		),
 		rootNode		= "root",

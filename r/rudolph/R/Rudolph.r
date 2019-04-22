@@ -185,12 +185,60 @@ setMethod(
 	}
 )
 
+#' prettyPrint
+#'
+#' Takes an abstract syntax tree (AST) and naively composes a character vector
+#' from the contents. Optionally outputs generated character vector to a named
+#' file.
+#'
+#' @param ast A nested list representing an AST.
+#' @param file Character vector containing file name
+#' @return A character vector representating composed data from the AST, or NULL
+#' if \code{file} is specified.
+#' \dontrun{
+#' prettyPrint(rudolph, ast, file = "output.txt")
+#' }
+setGeneric(name = "prettyPrint", def = function(self, ast, file) {
+	standardGeneric("prettyPrint")
+})
+setMethod(
+	"prettyPrint",
+	"Rudolph",
+	function(self, ast, file) {
+		if (missing(ast)) {
+			stop("Must specify ast.")
+		}
+
+		output <- character(0)
+		if (is.atomic(ast[["value"]])) {
+			if (!grepl("<EOF>", ast[["value"]])) {
+				output <- ast[["value"]]
+			}
+		}
+		else {
+			for (node in ast[["value"]]) {
+				output <- paste0(output, prettyPrint(self, node))
+			}
+		}
+
+		if (missing(file)) {
+			return(output)
+		}
+		else {
+			write_file(output, file)
+			return(NULL)
+		}
+	}
+)
+
 #' grammarLookup
 #'
 #' Performs a lookup in the grammar file supplied at initialization. For a given
 #' rule, returns the definition.
+#'
 #' @param ruleName Character vector containing name of grammar rule.
-#' @return A string representating a grammar definition (lexer or parser)
+#' @return A character vector representating a grammar definition (lexer or
+#' parser).
 #' \dontrun{
 #' grammarLookup(rudolph, "emoticon")
 #' }
