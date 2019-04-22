@@ -66,6 +66,7 @@
 NULL
 
 library('jsonlite')
+library('readr')
 
 # Source the utils file
 source('R/Utils.R')
@@ -153,16 +154,26 @@ setMethod(
 #' \dontrun{
 #' ast <- getAST(rudolph, "text to be parsed")
 #' }
-setGeneric(name = "getAST", def = function(self, inputText) {
+setGeneric(name = "getAST", def = function(self, text, file) {
 	standardGeneric("getAST")
 })
 setMethod(
 	"getAST",
 	"Rudolph",
-	function(self, inputText) {
+	function(self, text, file) {
+		if (missing(text) && missing(file)) {
+			stop("Must specify text or file.")
+		}
+		else if (!missing(file)) {
+			input <- read_file(file)
+		}
+		else {
+			input <- text
+		}
+
 		return(
 			parse_json(
-				.jcall(self@rudolph, returnSig = "S", "process", inputText)
+				.jcall(self@rudolph, returnSig = "S", "process", input)
 			)
 		)
 	}

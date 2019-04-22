@@ -8,5 +8,7 @@ Depends:
 License: TBD
 LazyData: true
 Imports:
+    jsonlite,
+    readr,
     rJava
 RoxygenNote: 6.1.1

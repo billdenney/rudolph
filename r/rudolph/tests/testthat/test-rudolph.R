@@ -10,12 +10,19 @@ test_that("get ast from text input", {
 		.jnew = function(a, b) return(new("jobjRef")),
 		{
 			rudolph <- Rudolph(
-				grammarFile     = system.file("inst", "TestGrammar.g4", package = "rudolph"),
+				grammarFile     = system.file(
+					"inst", "TestGrammar.g4",
+					package = "rudolph"
+				),
 				rootNode        = "santa",
 				sourceDirectory = getwd()
 			)
 			with_mock(
-				.jcall = function(c, d, e, f) return('{"rudolph": {"attributes": ["antlrs", "red nose"]}}'),
+				.jcall = function(c, returnSig, e, f) {
+					return(
+						'{"rudolph": {"attributes": ["antlrs", "red nose"]}}'
+					)
+				},
 				expect_equal(getAST(rudolph, ""), expectedOutput)
 			)
 		}
