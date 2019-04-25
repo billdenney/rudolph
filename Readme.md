@@ -110,7 +110,7 @@ Output:
 [1] "line+ EOF"
 ```
 
-## Lookup in Raw Grammar File
+### Lookup in Raw Grammar File
 
 ```r
 library("rudolph")
