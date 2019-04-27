@@ -84,6 +84,7 @@ Rudolph <- setClass(
 	"Rudolph",
 	slots = list(
 		grammarFile     = "character",
+		grammarMap      = "list",
 		rootNode        = "character",
 		rudolph         = "jobjRef",
 		sourceDirectory = "character"
@@ -120,6 +121,9 @@ setMethod(
 
 		# Validate grammar file
 		validateFile(.Object@grammarFile)
+
+		# Create map of grammar file
+		.Object@grammarMap = getGrammarMap(.Object@grammarFile)
 
 		# Initialize the JVM
 		initializeJVM()
@@ -249,6 +253,33 @@ setMethod(
 	"grammarLookup",
 	"Rudolph",
 	function(self, ruleName) {
-		searchForGrammarRule(self@grammarFile, ruleName)
+		definition = self@grammarMap[[ruleName]]
+
+		if (is.null(definition)) {
+			stop(paste(ruleName, "not found in grammar:", self@grammarFile))
+		}
+		else {
+			return(definition)
+		}
+	}
+)
+
+#' getGrammarMap
+#'
+#' Returns a named list parsed from the grammar file supplied at initialization.
+#'
+#' @return A named list. Rule names are the keys and the values are the
+#' definitions.
+#' \dontrun{
+#' getGrammarMap(rudolph)
+#' }
+setGeneric(name = "getGrammarMap", def = function(self) {
+	standardGeneric("getGrammarMap")
+})
+setMethod(
+	"getGrammarMap",
+	"Rudolph",
+	function(self) {
+		return(self@grammarMap)
 	}
 )

@@ -125,27 +125,6 @@ getCaptureGroup <- function(r, s, group_number) {
 	}
 }
 
-# If the supplied grammar entry matches the supplied rule name
-# returns the rule defintion. If the grammar entry is not for
-# the specified rule name, returns NULL
-getDefinition <- function(ruleName, line) {
-	ruleName = tolower(trim(ruleName))
-	currentRule = parseRuleName(line)
-
-	# could not find match
-	if (is.null(currentRule)) {
-		return(NULL)
-	}
-
-	# found the rule in the file, get the definition
-	if (ruleName == currentRule) {
-		return(parseDefinition(line))
-	}
-	else {
-		return(NULL)
-	}
-}
-
 # for a given grammar entry, parses out the definition
 parseDefinition <- function(line) {
 	defintionRegex = ":(.*);"
@@ -158,8 +137,21 @@ parseDefinition <- function(line) {
 	}
 }
 
+ignoreANTLRFragment <- function(line) {
+	line          = trim(line)
+	fragmentRegex = "^fragment\\s+(.*:)"
+	rule          = getCaptureGroup(fragmentRegex, line, 1)
+
+	# if the "fragment" keyword is not used on the line, return the line
+	if (is.null(rule)) {
+		return(line)
+	}
+
+	return(trim(rule))
+}
 # for a given grammar entry, parses out the rule
 parseRuleName <- function(line) {
+	line      = ignoreANTLRFragment(line)
 	ruleRegex = "^([\\w]+)\\s*:"
 	rule = getCaptureGroup(ruleRegex, line, 1)
 	if (is.null(rule)) {
@@ -209,15 +201,16 @@ isWhitespace <- function(line) {
 	}
 }
 
-# query raw grammar file for grammar rule definition
-searchForGrammarRule <- function(grammarFile, ruleName) {
-	lines = c()
+# create a map from a grammar file
+getGrammarMap <- function(grammarFile) {
+	lines      = c()
+	grammarMap = list()
 
 	# handles multiline comments /**/ by setting a flag at the opening
 	# comment tag (/*) and skipping every line in the file that is between
 	# until the closing tag (*/)
 	multiLineCommentFlag = FALSE
-	definition = NULL
+	definition           = NULL
 
 	filePointer = file(grammarFile, "r")
 
@@ -225,6 +218,7 @@ searchForGrammarRule <- function(grammarFile, ruleName) {
 	# returns the rule's definition
 	while (length(line) > 0) {
 		line = readLines(filePointer, n = 1)
+		line = trim(line)
 
 		# if hits end of file without finding the grammar rule,
 		# break from while loop
@@ -250,24 +244,28 @@ searchForGrammarRule <- function(grammarFile, ruleName) {
 				lines = c(lines, line)
 				line = paste(lines, collapse = " ")
 			}
-			definition = getDefinition(ruleName, line)
-			lines = list()
+
+			ruleName = parseRuleName(line)
+
+			# if line does not contain a rule, skip
+			if (is.null(ruleName)) {
+				next
+			}
+
+			definition             = parseDefinition(line)
+			grammarMap[[ruleName]] = definition
+
+			# reset lines
+			lines = c()
 		}
 		else {
 			# append
 			lines = c(lines, trim(line))
 			next
 		}
-
-		# return the definition when found
-		if (!is.null(definition)) {
-			close(filePointer)
-
-			return(definition)
-		}
 	}
+
 	close(filePointer)
-	# if we reach the end of the grammar file without finding
-	# the rule, throw an error
-	stop(paste(ruleName, "not found in grammar:", grammarFile))
+
+	return(grammarMap)
 }

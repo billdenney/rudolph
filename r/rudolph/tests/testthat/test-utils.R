@@ -4,12 +4,10 @@ test_that("can parse grammar name from file ", {
 	expect_equal(parseGrammarNameFromFile("inst/TestGrammar.g4"), "TestGrammar")
 })
 
-test_that("errors when grammar rule not found", {
-	expect_error(
-		searchForGrammarRule(
-			"../../inst/TestGrammar.g4",
-			"nonExistentRule"
-		),
-		"not found in grammar:"
-	)
+test_that("getGrammarMap returns a map of the grammar", {
+	grammarMap = getGrammarMap("../../inst/TestGrammar.g4")
+	returnType = typeof(grammarMap)
+
+	expect_equal(returnType, "list")
+	expect_equal(length(grammarMap), 24)
 })

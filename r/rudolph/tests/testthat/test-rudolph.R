@@ -99,6 +99,7 @@ test_that("grammar lookup", {
 		rootNode		= "root",
 		sourceDirectory = getwd()
 	)
+
 	definition <- grammarLookup(rudolph, "name")
 	expect_equal(definition, "WORD WHITESPACE")
 
@@ -107,4 +108,20 @@ test_that("grammar lookup", {
 
 	definition <- grammarLookup(rudolph, "emoticon")
 	expect_equal(definition, "':' '-'? ')' | ':' '-'? '('")
+})
+
+test_that("grammar lookup rule not found", {
+	rudolph <- Rudolph(
+		grammarFile     = system.file(
+			"inst", "TestGrammar.g4",
+			package = "rudolph"
+		),
+		rootNode		= "root",
+		sourceDirectory = getwd()
+	)
+
+	expect_error(
+		grammarLookup(rudolph, "nonExistentRule"),
+		"not found in grammar:"
+	)
 })
