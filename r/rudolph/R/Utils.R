@@ -224,8 +224,14 @@ searchForGrammarRule <- function(grammarFile, ruleName) {
 	# loops through the grammar file trying to find a specified rule
 	# returns the rule's definition
 	while (length(line) > 0) {
-
 		line = readLines(filePointer, n = 1)
+
+		# if hits end of file without finding the grammar rule,
+		# break from while loop
+		if (identical(line, character(0))) {
+			break
+		}
+
 		line = stripInlineComments(line)
 
 		if (isMultiLineComment(line)) {
@@ -238,10 +244,9 @@ searchForGrammarRule <- function(grammarFile, ruleName) {
 		}
 
 		# only process a line once you have reached the ANTLR terminator ";"
-		#
 		if (hasTerminator(line)) {
 			if (length(lines) > 0) {
-				#append
+				# append
 				lines = c(lines, line)
 				line = paste(lines, collapse = " ")
 			}
@@ -249,7 +254,6 @@ searchForGrammarRule <- function(grammarFile, ruleName) {
 			lines = list()
 		}
 		else {
-
 			# append
 			lines = c(lines, trim(line))
 			next
