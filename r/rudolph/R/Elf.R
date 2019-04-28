@@ -149,22 +149,18 @@ setMethod(
 	"compile",
 	"Elf",
 	function(self) {
-		grammarFileWildMatch = paste(
-			parseGrammarNameFromFile(self@grammarFile), "*.java",
-			sep = ""
+		grammarFileWildMatch = paste0(
+			parseGrammarNameFromFile(self@grammarFile), "*.java"
 		)
-		sourceFiles = paste0(
-			"'",
-			system.file(self@destinationDirectory, grammarFileWildMatch),
-			"'"
-		)
-		classPathArg = paste0("'", paste(self@classPaths, collapse = ":"), "'")
+		sourceFiles = system.file(self@destinationDirectory, grammarFileWildMatch)
+
+		classPathArg = paste0(self@classPaths, collapse = ":")
 
 		# system2 warning messages are not very useful
 		result <- suppressWarnings(
 			system2(
 				"javac",
-				args   = paste("-cp", classPathArg, sourceFiles, sep = " "),
+				args   = c("-cp", classPathArg, sourceFiles),
 				stderr = TRUE,
 				stdout = TRUE
 			)
