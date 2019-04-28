@@ -1,5 +1,5 @@
 # Rudolph
-> *Rudolph's ANTLRs R stubby, but it doesn't mean he can't shine the way*
+> *Rudolph's ANTLRs R stubby, but it doesn't mean he can't light the way*
 
 ## Overview
 
@@ -28,7 +28,7 @@ aside).
 ## Requirements
 + Java Development Kit 8+
   + `java` and `javac` are both required
-+ R version 3.5.2+
++ R version 3.5+
 
 ## Installation
 Rudolph is available on CRAN:

@@ -65,13 +65,6 @@
 #' @name Rudolph
 NULL
 
-library('jsonlite')
-library('readr')
-library('stringr')
-
-# Source the utils file
-source('R/Utils.R')
-
 #' An S4 class to represent an instance of Rudolph.
 #'
 #' @slot grammarFile A character vector of an absolute path to a .g4 grammar
@@ -113,6 +106,7 @@ Rudolph <- setClass(
 #' }
 #'
 #' @export
+#' @importFrom rJava .jaddClassPath .jnew
 setMethod(
 	"initialize",
 	"Rudolph",
@@ -134,7 +128,7 @@ setMethod(
 		initializeJVM()
 
 		# Add source directory and Rudolph.jar to Java classpath
-		.jaddClassPath(c(
+		rJava::.jaddClassPath(c(
 			normalizePath(sourceDirectory, mustWork = TRUE),
 			system.file("inst/java", "Rudolph.jar", package = "rudolph")
 		))
@@ -143,7 +137,7 @@ setMethod(
 		grammarName = parseGrammarNameFromFile(.Object@grammarFile)
 
 		# Create Rudolph Java instance
-		.Object@rudolph <- .jnew(
+		.Object@rudolph <- rJava::.jnew(
 			'org.rudolph.rudolph.Rudolph',
 			c(grammarName, rootNode)
 		)
@@ -168,6 +162,9 @@ setMethod(
 #' }
 #'
 #' @export
+#' @importFrom readr read_file
+#' @importFrom rJava .jcall
+#' @importFrom jsonlite parse_json
 setGeneric(name = "getAST", def = function(self, text, file) {
 	standardGeneric("getAST")
 })
@@ -182,15 +179,15 @@ setMethod(
 			stop("Either text or file should be specified, not both.")
 		}
 		else if (!missing(file)) {
-			input <- read_file(file)
+			input <- readr::read_file(file)
 		}
 		else {
 			input <- text
 		}
 
 		return(
-			parse_json(
-				.jcall(self@rudolph, returnSig = "S", "process", input)
+			jsonlite::parse_json(
+				rJava::.jcall(self@rudolph, returnSig = "S", "process", input)
 			)
 		)
 	}
@@ -211,6 +208,7 @@ setMethod(
 #' }
 #'
 #' @export
+#' @importFrom readr write_file
 setGeneric(name = "prettyPrint", def = function(self, ast, file) {
 	standardGeneric("prettyPrint")
 })
@@ -238,7 +236,7 @@ setMethod(
 			return(output)
 		}
 		else {
-			write_file(output, file)
+			readr::write_file(output, file)
 			return(NULL)
 		}
 	}
@@ -304,6 +302,7 @@ setMethod(
 #' }
 #'
 #' @export
+#' @importFrom stringr str_pad
 setGeneric(name = "printGrammarMap", def = function(self) {
 	standardGeneric("printGrammarMap")
 })
@@ -317,7 +316,7 @@ setMethod(
 			cat(
 				sprintf(
 					"%s : %s",
-					str_pad(name, maxName, side = "right"),
+					stringr::str_pad(name, maxName, side = "right"),
 					self@grammarMap[[name]]
 				),
 				sep = "\n"

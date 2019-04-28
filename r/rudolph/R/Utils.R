@@ -1,12 +1,12 @@
 options(java.parameters = c('-Xmx500M'))
-library('rJava')
 
 #' initializeJVM
 #'
 #' Sets the working directory and initializes the JVM.
+#' @importFrom rJava .jpackage
 initializeJVM <- function() {
 	# Initialize the JVM
-	.jpackage("rudolph", lib.loc=find.package("rudolph"))
+	rJava::.jpackage("rudolph", lib.loc = find.package("rudolph"))
 }
 
 #' validateFile

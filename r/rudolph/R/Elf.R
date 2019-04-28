@@ -39,6 +39,7 @@ Elf <- setClass(
 #' }
 #'
 #' @export
+#' @importFrom rJava .jaddClassPath .jnew
 setMethod(
 	"initialize",
 	"Elf",
@@ -67,9 +68,9 @@ setMethod(
 			.Object@destinationDirectory,
 			system.file("inst/java", "RudolphElf.jar", package = "rudolph")
 		)
-		.jaddClassPath(.Object@classPaths)
+		rJava::.jaddClassPath(.Object@classPaths)
 
-		.Object@wunorse <- .jnew("org.rudolph.elf.Wunorse")
+		.Object@wunorse <- rJava::.jnew("org.rudolph.elf.Wunorse")
 
 		return(.Object)
 	}
@@ -109,6 +110,7 @@ setMethod(
 #' }
 #'
 #' @export
+#' @importFrom rJava .jcall .jarray
 setGeneric(name = "generate", def = function(self) {
 	standardGeneric("generate")
 })
@@ -116,7 +118,7 @@ setMethod(
 	"generate",
 	"Elf",
 	function(self) {
-		.jcall(self@wunorse, "V", "main", .jarray(c(
+		rJava::.jcall(self@wunorse, "V", "main", rJava::.jarray(c(
 			self@grammarFile,
 			"-o", self@destinationDirectory
 		)))
