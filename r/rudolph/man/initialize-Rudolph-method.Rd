@@ -28,6 +28,7 @@ rudolph <- Rudolph(
 	sourceDirectory = "/absolute/path/to/source"
 )
 }
+
 }
 \keyword{init,}
 \keyword{initialize}

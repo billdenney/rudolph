@@ -4,20 +4,25 @@
 \alias{getAST}
 \title{getAST}
 \usage{
-getAST(self, inputText)
+getAST(self, text, file)
 }
 \arguments{
-\item{inputText}{Character vector containing text to be parsed into an AST.}
+\item{text}{Character vector containing text to be parsed into an AST.}
+
+\item{file}{Character vector containing file name, contents of which to be
+parsed into an AST.}
 }
 \value{
-A nested list representing \code{inputText} parsed into an AST.
+A nested list representing \code{text} or contents of \code{file}
+parsed into an AST.
 }
 \description{
 Generates an abstract syntax tree (AST) from a grammar. The AST returned is a
-nested list.
+nested list. Only one of \code{text} or \code{file} should be specified.
 }
 \examples{
 \dontrun{
 ast <- getAST(rudolph, "text to be parsed")
 }
+
 }

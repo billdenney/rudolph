@@ -10,7 +10,8 @@ grammarLookup(self, ruleName)
 \item{ruleName}{Character vector containing name of grammar rule.}
 }
 \value{
-A string representating a grammar definition (lexer or parser)
+A character vector representating a grammar definition (lexer or
+parser).
 \dontrun{
 grammarLookup(rudolph, "emoticon")
 }

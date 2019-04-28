@@ -5,7 +5,7 @@ test_that("can parse grammar name from file ", {
 })
 
 test_that("getGrammarMap returns a map of the grammar", {
-	grammarMap = getGrammarMap("../../inst/TestGrammar.g4")
+	grammarMap = parseGrammarMap("../../inst/TestGrammar.g4")
 	returnType = typeof(grammarMap)
 
 	expect_equal(returnType, "list")

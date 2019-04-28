@@ -202,7 +202,7 @@ isWhitespace <- function(line) {
 }
 
 # create a map from a grammar file
-getGrammarMap <- function(grammarFile) {
+parseGrammarMap <- function(grammarFile) {
 	lines      = c()
 	grammarMap = list()
 

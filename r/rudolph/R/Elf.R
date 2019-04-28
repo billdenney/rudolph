@@ -10,6 +10,8 @@ source('R/Utils.R')
 #' file.
 #' @slot wunorse A Java object reference to an instance of
 #' org.rudolph.elf.Wunorse.
+#'
+#' @export
 Elf <- setClass(
 	"Elf",
 	slots = list(
@@ -35,6 +37,8 @@ Elf <- setClass(
 #' 	grammarFile          = "/absolute/path/to/grammar.g4"
 #' )
 #' }
+#'
+#' @export
 setMethod(
 	"initialize",
 	"Elf",
@@ -80,6 +84,8 @@ setMethod(
 #' \dontrun{
 #' generateAndCompile(elf)
 #' }
+#'
+#' @export
 setGeneric(name = "generateAndCompile", def = function(self) {
 	standardGeneric("generateAndCompile")
 })
@@ -101,6 +107,8 @@ setMethod(
 #' \dontrun{
 #' generate(elf)
 #' }
+#'
+#' @export
 setGeneric(name = "generate", def = function(self) {
 	standardGeneric("generate")
 })
@@ -130,6 +138,8 @@ setMethod(
 #' \dontrun{
 #' compile(elf)
 #' }
+#'
+#' @export
 setGeneric(name = "compile", def = function(self) {
 	standardGeneric("compile")
 })

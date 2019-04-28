@@ -25,6 +25,7 @@ elf <- Elf(
 	grammarFile          = "/absolute/path/to/grammar.g4"
 )
 }
+
 }
 \keyword{init,}
 \keyword{initialize}

@@ -16,4 +16,5 @@ Compiles generated parser/lexer Java files using \code{javac}.
 \dontrun{
 compile(elf)
 }
+
 }

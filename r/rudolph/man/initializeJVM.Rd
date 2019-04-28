@@ -4,7 +4,7 @@
 \alias{initializeJVM}
 \title{initializeJVM}
 \usage{
-initializeJVM(workingDirectory)
+initializeJVM()
 }
 \description{
 Sets the working directory and initializes the JVM.

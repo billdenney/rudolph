@@ -67,6 +67,7 @@ NULL
 
 library('jsonlite')
 library('readr')
+library('stringr')
 
 # Source the utils file
 source('R/Utils.R')
@@ -80,6 +81,8 @@ source('R/Utils.R')
 #' org.rudolph.rudolph.Rudolph.
 #' @slot sourceDirectory A character vector of an absolute path to the directory
 #' the containing the compiled grammar files.
+#'
+#' @export
 Rudolph <- setClass(
 	"Rudolph",
 	slots = list(
@@ -108,6 +111,8 @@ Rudolph <- setClass(
 #' 	sourceDirectory = "/absolute/path/to/source"
 #' )
 #' }
+#'
+#' @export
 setMethod(
 	"initialize",
 	"Rudolph",
@@ -123,7 +128,7 @@ setMethod(
 		validateFile(.Object@grammarFile)
 
 		# Create map of grammar file
-		.Object@grammarMap = getGrammarMap(.Object@grammarFile)
+		.Object@grammarMap = parseGrammarMap(.Object@grammarFile)
 
 		# Initialize the JVM
 		initializeJVM()
@@ -161,6 +166,8 @@ setMethod(
 #' \dontrun{
 #' ast <- getAST(rudolph, "text to be parsed")
 #' }
+#'
+#' @export
 setGeneric(name = "getAST", def = function(self, text, file) {
 	standardGeneric("getAST")
 })
@@ -202,6 +209,8 @@ setMethod(
 #' \dontrun{
 #' prettyPrint(rudolph, ast, file = "output.txt")
 #' }
+#'
+#' @export
 setGeneric(name = "prettyPrint", def = function(self, ast, file) {
 	standardGeneric("prettyPrint")
 })
@@ -246,6 +255,8 @@ setMethod(
 #' \dontrun{
 #' grammarLookup(rudolph, "emoticon")
 #' }
+#'
+#' @export
 setGeneric(name = "grammarLookup", def = function(self, ruleName) {
 	standardGeneric("grammarLookup")
 })
@@ -281,5 +292,38 @@ setMethod(
 	"Rudolph",
 	function(self) {
 		return(self@grammarMap)
+	}
+)
+
+#' printGrammarMap
+#'
+#' Prints a named list parsed from the grammar file supplied at initialization.
+#'
+#' \dontrun{
+#' printGrammarMap(rudolph)
+#' }
+#'
+#' @export
+setGeneric(name = "printGrammarMap", def = function(self) {
+	standardGeneric("printGrammarMap")
+})
+setMethod(
+	"printGrammarMap",
+	"Rudolph",
+	function(self) {
+		maxName <- max(nchar(names(self@grammarMap)))
+
+		for (name in names(self@grammarMap)) {
+			cat(
+				sprintf(
+					"%s : %s",
+					str_pad(name, maxName, side = "right"),
+					self@grammarMap[[name]]
+				),
+				sep = "\n"
+			)
+		}
+
+		invisible(self@grammarMap)
 	}
 )
