@@ -159,7 +159,7 @@ setMethod(
 		)
 
 		classPathArg = paste0(
-			"'", paste0(self@classPaths, collapse = .Platform$path.sep), "'"
+			'"', paste0(self@classPaths, collapse = .Platform$path.sep), '"'
 		)
 
 		browser()
