@@ -152,9 +152,15 @@ setMethod(
 		grammarFileWildMatch = paste0(
 			parseGrammarNameFromFile(self@grammarFile), "*.java"
 		)
-		sourceFiles = system.file(self@destinationDirectory, grammarFileWildMatch)
+
+		sourceFiles = system.file(
+			self@destinationDirectory,
+			grammarFileWildMatch
+		)
 
 		classPathArg = paste0(self@classPaths, collapse = ":")
+
+		browser()
 
 		# system2 warning messages are not very useful
 		result <- suppressWarnings(
