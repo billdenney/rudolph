@@ -66,7 +66,7 @@ setMethod(
 		# Add destination directory and RudolphElf.jar to Java classpath
 		.Object@classPaths <- c(
 			.Object@destinationDirectory,
-			system.file("inst/java", "RudolphElf.jar", package = "rudolph")
+			system.file("java", "RudolphElf.jar", package = "rudolph")
 		)
 		rJava::.jaddClassPath(.Object@classPaths)
 

@@ -130,7 +130,7 @@ setMethod(
 		# Add source directory and Rudolph.jar to Java classpath
 		rJava::.jaddClassPath(c(
 			normalizePath(sourceDirectory, mustWork = TRUE),
-			system.file("inst/java", "Rudolph.jar", package = "rudolph")
+			system.file("java", "Rudolph.jar", package = "rudolph")
 		))
 
 		# Parse out the grammar name

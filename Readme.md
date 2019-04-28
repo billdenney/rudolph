@@ -154,4 +154,30 @@ Output:
 [1] "santa SAYS: @rudolph with your nose so bright\n"
 ```
 
+### Print grammar map
+
+```r
+library("rudolph")
+
+grammarFilePath = system.file(
+	"inst",
+	"TestGrammar.g4",
+	package = "rudolph"
+)
+
+rudolph <- Rudolph(
+	grammarFile 	= grammarFilePath,
+	rootNode 		= "root",
+	# location of the compiled parser/lexer files
+	sourceDirectory = "/SOME/DIRECTORY"
+)
+
+printGrammarMap(rudolph)
+```
+
+Output:
+```
+[1] "santa SAYS: @rudolph with your nose so bright\n"
+```
+
 Enjoy! 🦌
