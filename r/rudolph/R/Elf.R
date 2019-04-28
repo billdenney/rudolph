@@ -153,12 +153,14 @@ setMethod(
 			parseGrammarNameFromFile(self@grammarFile), "*.java"
 		)
 
-		sourceFiles = system.file(
+		sourceFiles = file.path(
 			self@destinationDirectory,
 			grammarFileWildMatch
 		)
 
-		classPathArg = paste0(self@classPaths, collapse = ":")
+		classPathArg = paste0(
+			"'", paste0(self@classPaths, collapse = .Platform$path.sep), "'"
+		)
 
 		browser()
 
