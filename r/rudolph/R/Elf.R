@@ -153,14 +153,12 @@ setMethod(
 			parseGrammarNameFromFile(self@grammarFile), "*.java",
 			sep = ""
 		)
-		sourceFiles = paste(
-			self@destinationDirectory, grammarFileWildMatch,
-			sep = "/"
+		sourceFiles = paste0(
+			"'",
+			system.file(self@destinationDirectory, grammarFileWildMatch),
+			"'"
 		)
-		classPathArg = paste(
-			"'", paste(self@classPaths, collapse = ":"), "'",
-			sep = ""
-		)
+		classPathArg = paste0("'", paste(self@classPaths, collapse = ":"), "'")
 
 		# system2 warning messages are not very useful
 		result <- suppressWarnings(
