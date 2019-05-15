@@ -26,11 +26,11 @@ TestGrammar.g4 file available in the package (destination and source directories
 aside).
 
 ## Requirements
-+ Java Development Kit 8+
-    + `java` and `javac` are both required
-    + Ensure `JAVA_HOME` environment variable is set appropriately
-    + Ensure `PATH` contains location(s) of `java` and `javac`
-+ R version 3.5+
+* Java Development Kit 8+
+    * `java` and `javac` are both required
+    * Ensure `JAVA_HOME` environment variable is set appropriately
+    * Ensure `PATH` contains location(s) of `java` and `javac`
+* R version 3.5+
 
 ## Installation
 Rudolph is available on CRAN:
