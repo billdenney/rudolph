@@ -28,6 +28,8 @@ aside).
 ## Requirements
 + Java Development Kit 8+
   + `java` and `javac` are both required
+  + Ensure `JAVA_HOME` environment variable is set appropriately
+  + Ensure `PATH` contains location(s) of `java` and `javac`
 + R version 3.5+
 
 ## Installation
@@ -177,7 +179,30 @@ printGrammarMap(rudolph)
 
 Output:
 ```
-[1] "santa SAYS: @rudolph with your nose so bright\n"
+root       : line+ EOF
+line       : name command message NEWLINE
+message    : (emoticon | link | color | mention | WORD | WHITESPACE)+
+name       : WORD WHITESPACE
+command    : (SAYS | SHOUTS) ':' WHITESPACE
+emoticon   : ':' '-'? ')' | ':' '-'? '('
+link       : TEXT TEXT
+color      : '/' WORD '/' message '/'
+mention    : '@' WORD
+a          : ('A'|'a')
+s          : ('S'|'s')
+y          : ('Y'|'y')
+h          : ('H'|'h')
+o          : ('O'|'o')
+u          : ('U'|'u')
+t          : ('T'|'t')
+lowercase  : [a-z]
+uppercase  : [A-Z]
+says       : S A Y S
+shouts     : S H O U T S
+text       : ('['|'(') .*? (']'|')')
+word       : (LOWERCASE | UPPERCASE | '_')+
+whitespace : (' ' | '\t')+
+newline    : ('\r'? '\n' | '\r')+
 ```
 
 Enjoy! 🦌
