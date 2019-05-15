@@ -75,7 +75,7 @@ NULL
 #' @slot sourceDirectory A character vector of an absolute path to the directory
 #' the containing the compiled grammar files.
 #'
-#' @export
+#' @export Rudolph
 Rudolph <- setClass(
 	"Rudolph",
 	slots = list(
@@ -107,6 +107,7 @@ Rudolph <- setClass(
 #'
 #' @export
 #' @importFrom rJava .jaddClassPath .jnew
+#' @include Utils.R
 setMethod(
 	"initialize",
 	"Rudolph",
