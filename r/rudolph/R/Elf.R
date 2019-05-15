@@ -11,7 +11,7 @@ source('R/Utils.R')
 #' @slot wunorse A Java object reference to an instance of
 #' org.rudolph.elf.Wunorse.
 #'
-#' @export
+#' @export Elf
 Elf <- setClass(
 	"Elf",
 	slots = list(
@@ -40,6 +40,7 @@ Elf <- setClass(
 #'
 #' @export
 #' @importFrom rJava .jaddClassPath .jnew
+#' @include Utils.R
 setMethod(
 	"initialize",
 	"Elf",
@@ -161,8 +162,6 @@ setMethod(
 		classPathArg = paste0(
 			'"', paste0(self@classPaths, collapse = .Platform$path.sep), '"'
 		)
-
-		browser()
 
 		# system2 warning messages are not very useful
 		result <- suppressWarnings(
