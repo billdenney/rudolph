@@ -44,16 +44,13 @@
 #' @examples
 #' \dontrun{
 #' ast <- list(
-#' 	type  = "parser",
 #' 	name  = "grammar rule name",
 #' 	value = list(
 #' 		list(
-#' 			type  = "lexer",
 #' 			name  = "grammar rule name 1",
 #' 			value = "grammar rule matched text 1"
 #' 		),
 #' 		list(
-#' 			type  = "lexer",
 #' 			name  = "grammar rule name 2",
 #' 			value = "grammar rule matched text 2"
 #' 		),
@@ -222,13 +219,13 @@ setMethod(
 		}
 
 		output <- character(0)
-		if (is.atomic(ast[["value"]])) {
-			if (!grepl("<EOF>", ast[["value"]])) {
-				output <- ast[["value"]]
+		if (!is.null(ast[["text"]]) && is.atomic(ast[["text"]])) {
+			if (!grepl("<EOF>", ast[["text"]])) {
+				output <- ast[["text"]]
 			}
 		}
 		else {
-			for (node in ast[["value"]]) {
+			for (node in ast[[names(ast)[1]]]) {
 				output <- paste0(output, prettyPrint(self, node))
 			}
 		}

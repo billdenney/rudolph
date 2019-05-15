@@ -128,7 +128,6 @@ public class Rudolph {
 		if (tree instanceof TerminalNodeImpl) {
 			Token token = ((TerminalNodeImpl) tree).getSymbol();
 
-			map.put("type", "lexer");
 			map.put("name", vocabulary.getDisplayName(token.getType()));
 			map.put("value", token.getText());
 		}
@@ -136,7 +135,6 @@ public class Rudolph {
 			List<Map<String, Object>> children = new ArrayList<>();
 			String name = tree.getClass().getSimpleName().replaceAll("Context$", "");
 
-			map.put("type", "parser");
 			map.put("name", Character.toLowerCase(name.charAt(0)) + name.substring(1));
 			map.put("value", children);
 
