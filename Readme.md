@@ -249,4 +249,4 @@ In Windows environments, see [this reference](https://support.microsoft.com/en-u
 In Unix-like environments, try running `sudo R CMD javareconf` if `JAVA_HOME`
 and `PATH` are configured correctly.
 
-## Enjoy! 🦌
+# Enjoy! 🦌
