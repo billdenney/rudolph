@@ -7,6 +7,22 @@ options(java.parameters = c('-Xmx500M'))
 initializeJVM <- function() {
 	# Initialize the JVM
 	rJava::.jpackage("rudolph", lib.loc = find.package("rudolph"))
+
+	javaVersion <- .jcall(
+		"java/lang/System",
+		"S",
+		"getProperty",
+		"java.version"
+	)
+
+	if (grepl("^12", javaVersion)) {
+		stop(
+			paste(
+				"Java 12 currently not supported due to broken JNI support.",
+				"Use stable Java 8 - Java 11."
+			)
+		)
+	}
 }
 
 #' validateFile

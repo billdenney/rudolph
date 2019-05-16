@@ -53,7 +53,10 @@ public class Rudolph {
 				lexerClass = cl.loadClass(lexerName).asSubclass(Lexer.class);
 			}
 			catch (ClassNotFoundException cnfe2) {
-				System.err.println("Can't load " + lexerName + " as lexer or parser");
+				System.err.println(
+						"Can't load " + lexerName + " as lexer or parser."
+						+ " Compiled java files (.class files) not found."
+				);
 				return "ERROR";
 			}
 		}
@@ -128,15 +131,14 @@ public class Rudolph {
 		if (tree instanceof TerminalNodeImpl) {
 			Token token = ((TerminalNodeImpl) tree).getSymbol();
 
-			map.put("name", vocabulary.getDisplayName(token.getType()));
-			map.put("value", token.getText());
+			map.put("type", vocabulary.getDisplayName(token.getType()));
+			map.put("text", token.getText());
 		}
 		else {
 			List<Map<String, Object>> children = new ArrayList<>();
 			String name = tree.getClass().getSimpleName().replaceAll("Context$", "");
 
-			map.put("name", Character.toLowerCase(name.charAt(0)) + name.substring(1));
-			map.put("value", children);
+			map.put(Character.toLowerCase(name.charAt(0)) + name.substring(1), children);
 
 			for (int i = 0; i < tree.getChildCount(); i++) {
 				Map<String, Object> nested = new LinkedHashMap<>();
