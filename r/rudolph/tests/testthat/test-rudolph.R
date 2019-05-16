@@ -90,6 +90,138 @@ test_that("pretty print AST", {
 	expect_equal(prettyPrint(rudolph, ast), expectedOutput)
 })
 
+test_that("validate AST", {
+	rudolph <- Rudolph(
+		grammarFile     = system.file(
+			"inst", "TestGrammar.g4",
+			package = "rudolph"
+		),
+		rootNode        = "root",
+		sourceDirectory = getwd()
+	)
+
+	goodAST <- list(
+		root = list(
+			list(
+				line = list(
+					list(text = 1),
+					list(text = 2)
+				)
+			),
+			list(
+				line = list(
+					list(text = 3),
+					list(
+						name = list(
+							list(text = 4)
+						)
+					)
+				)
+			),
+			list(text = 5),
+			list(text = "<EOF>")
+		)
+	)
+
+	badAST1 <- list(
+		durr = list(
+			list(
+				line = list(
+					list(text = 1),
+					list(text = 2)
+				)
+			),
+			list(
+				line = list(
+					list(text = 3),
+					list(
+						name = list(
+							list(text = 4)
+						)
+					)
+				)
+			),
+			list(text = 5),
+			list(text = "<EOF>")
+		)
+	)
+
+	badAST2 <- list(
+		root = list(
+			list(
+				line = list(
+					list(text = 1),
+					list(text = 2)
+				)
+			),
+			list(
+				line = list(
+					list(text = 3),
+					list(
+						durr = list(
+							list(text = 4)
+						)
+					)
+				)
+			),
+			list(text = 5),
+			list(text = "<EOF>")
+		)
+	)
+
+	badAST3 <- list(
+		root = list(
+			list(
+				line = list(
+					list(text = 1),
+					list(text = 2)
+				)
+			),
+			list(
+				line = list(
+					list(text = 3),
+					list(
+						name = list(
+							list(text = 4)
+						)
+					)
+				)
+			),
+			list(durr = 5),
+			list(text = "<EOF>")
+		)
+	)
+
+	badAST4 <- list(
+		root = list(
+			list(
+				line = list(
+					list(text = 1),
+					list(text = 2)
+				)
+			),
+			list(
+				line = list(
+					list(text = 3),
+					list(
+						name = list(
+							list(durr = 4)
+						)
+					)
+				)
+			),
+			list(text = 5),
+			list(text = "<EOF>")
+		)
+	)
+
+	expect_equal(validateAST(rudolph, goodAST), TRUE)
+	expect_equal(validateAST(rudolph, badAST1), FALSE)
+	expect_equal(validateAST(rudolph, badAST2), FALSE)
+	expect_equal(validateAST(rudolph, badAST3), FALSE)
+	expect_equal(validateAST(rudolph, badAST4), FALSE)
+})
+
 test_that("grammar lookup", {
 	rudolph <- Rudolph(
 		grammarFile		= system.file(

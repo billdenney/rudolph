@@ -191,6 +191,49 @@ setMethod(
 	}
 )
 
+#' validateAST
+#'
+#' Validates an AST in a basic way. Checks if AST only contains defined grammar
+#' rules in the instance grammar file. Does not check for grammar rule
+#' relationships.
+#'
+#' @return A logical vector. TRUE if the supplied AST only contains grammar
+#' rules defined in the grammar file, FALSE otherwise.
+#' \dontrun{
+#' validateAST(rudolph, ast)
+#' }
+#'
+#' @export
+setGeneric(name = "validateAST", def = function(self, ast) {
+	standardGeneric("validateAST")
+})
+setMethod(
+	"validateAST",
+	"Rudolph",
+	function(self, ast) {
+		if (missing(ast)) {
+			stop("Must specify ast.")
+		}
+
+		if (
+			is.null(self@grammarMap[[names(ast)[1]]])
+			&& is.null(ast[["text"]])
+		) {
+			return(FALSE)
+		}
+
+		if (!is.atomic(ast[[names(ast)[1]]])) {
+			for (node in ast[[names(ast)[1]]]) {
+				if (!validateAST(self, node)) {
+					return(FALSE)
+				}
+			}
+		}
+
+		return(TRUE)
+	}
+)
+
 #' prettyPrint
 #'
 #' Takes an abstract syntax tree (AST) and naively composes a character vector
@@ -280,6 +323,8 @@ setMethod(
 #' \dontrun{
 #' getGrammarMap(rudolph)
 #' }
+#'
+#' @export
 setGeneric(name = "getGrammarMap", def = function(self) {
 	standardGeneric("getGrammarMap")
 })

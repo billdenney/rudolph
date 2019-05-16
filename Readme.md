@@ -30,7 +30,7 @@ directory. To recompile and use with Rudolph, copy the resulting `.jar` file
 into `r/rudolph/inst/java` and reload Rudolph.
 
 ## Requirements
-* Java Development Kit 8+
+* Java Development Kit 8+ (Java 12 currently not supported)
     * `java` and `javac` are both required
     * Ensure `JAVA_HOME` environment variable is set appropriately
     * Ensure `PATH` contains location(s) of `java` and `javac`
@@ -80,14 +80,74 @@ grammarFilePath = system.file(
 )
 
 rudolph <- Rudolph(
-	grammarFile 	= grammarFilePath,
-	rootNode 		= "root",
+	grammarFile     = grammarFilePath,
+	rootNode        = "root",
 	sourceDirectory = "/SOME/DIRECTORY"
 )
 
 ast <- getAST(rudolph, "santa SAYS: @rudolph with your nose so bright\n")
 
 print(ast)
+```
+
+### Composing Text from AST
+
+```r
+library("rudolph")
+
+grammarFilePath = system.file(
+	"inst",
+	"TestGrammar.g4",
+	package = "rudolph"
+)
+
+rudolph <- Rudolph(
+	grammarFile     = grammarFilePath,
+	rootNode        = "root",
+	# location of the compiled parser/lexer files
+	sourceDirectory = "/SOME/DIRECTORY"
+)
+
+ast <- getAST(rudolph, "santa SAYS: @rudolph with your nose so bright\n")
+
+# Modify the AST here
+
+prettyPrint(rudolph, ast)
+```
+
+Output:
+```
+[1] "santa SAYS: @rudolph with your nose so bright\n"
+```
+
+### Validate AST
+
+```r
+library("rudolph")
+
+grammarFilePath = system.file(
+	"inst",
+	"TestGrammar.g4",
+	package = "rudolph"
+)
+
+rudolph <- Rudolph(
+	grammarFile     = grammarFilePath,
+	rootNode        = "root",
+	# location of the compiled parser/lexer files
+	sourceDirectory = "/SOME/DIRECTORY"
+)
+
+ast <- getAST(rudolph, "santa SAYS: @rudolph with your nose so bright\n")
+
+# Modify the AST here
+
+validateAST(rudolph, ast)
+```
+
+Output:
+```
+[1] TRUE
 ```
 
 ### Performing Grammar Rule Lookups
@@ -102,8 +162,8 @@ grammarFilePath = system.file(
 )
 
 rudolph <- Rudolph(
-	grammarFile 	= grammarFilePath,
-	rootNode 		= "root",
+	grammarFile     = grammarFilePath,
+	rootNode        = "root",
 	# location of the compiled parser/lexer files
 	sourceDirectory = "/SOME/DIRECTORY"
 )
@@ -130,36 +190,6 @@ grammarFilePath = system.file(
 grammarLookup(grammarFilePath, "emoticon")
 ```
 
-### Composing Text from AST
-
-```r
-library("rudolph")
-
-grammarFilePath = system.file(
-	"inst",
-	"TestGrammar.g4",
-	package = "rudolph"
-)
-
-rudolph <- Rudolph(
-	grammarFile 	= grammarFilePath,
-	rootNode 		= "root",
-	# location of the compiled parser/lexer files
-	sourceDirectory = "/SOME/DIRECTORY"
-)
-
-ast <- getAST(rudolph, "santa SAYS: @rudolph with your nose so bright\n")
-
-# Modify the AST here
-
-prettyPrint(rudolph, ast)
-```
-
-Output:
-```
-[1] "santa SAYS: @rudolph with your nose so bright\n"
-```
-
 ### Print grammar map
 
 ```r
@@ -172,8 +202,8 @@ grammarFilePath = system.file(
 )
 
 rudolph <- Rudolph(
-	grammarFile 	= grammarFilePath,
-	rootNode 		= "root",
+	grammarFile     = grammarFilePath,
+	rootNode        = "root",
 	# location of the compiled parser/lexer files
 	sourceDirectory = "/SOME/DIRECTORY"
 )
@@ -208,5 +238,11 @@ word       : (LOWERCASE | UPPERCASE | '_')+
 whitespace : (' ' | '\t')+
 newline    : ('\r'? '\n' | '\r')+
 ```
+
+## Troubleshooting
+### rJava fails to load
+This is likely an issue with the `JAVA_HOME` and `PATH` environment variables.
+In Windows environments, see [this reference](https://support.microsoft.com/en-us/help/3103813/qa-when-i-try-to-load-the-rjava-package-using-the-library-command-i-ge) for more troubleshooting steps.
+In Unix-like environments, try running `sudo R CMD javareconf`
 
 Enjoy! 🦌
