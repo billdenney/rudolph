@@ -25,6 +25,10 @@ precompiled ANTLR files. Below are working examples of Rudolph using
 TestGrammar.g4 file available in the package (destination and source directories
 aside).
 
+The source code of the implementation of ANTLR library is included in the `src`
+directory. To recompile and use with Rudolph, copy the resulting `.jar` file
+into `r/rudolph/inst/java` and reload Rudolph.
+
 ## Requirements
 * Java Development Kit 8+
     * `java` and `javac` are both required
