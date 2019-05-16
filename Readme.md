@@ -25,9 +25,10 @@ precompiled ANTLR files. Below are working examples of Rudolph using
 TestGrammar.g4 file available in the package (destination and source directories
 aside).
 
-The source code of the implementation of ANTLR library is included in the `src`
-directory. To recompile and use with Rudolph, copy the resulting `.jar` file
-into `r/rudolph/inst/java` and reload Rudolph.
+The source code of the implementation of ANTLR library is included in
+`r/rudolph/java` directory in accordance with [CRAN guidelines](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Non_002dR-scripts-in-packages). To recompile and
+use with Rudolph, copy the resulting `.jar` file into `r/rudolph/inst/java` and
+reload Rudolph.
 
 ## Requirements
 * Java Development Kit 8+ (Java 12 currently not supported)
@@ -242,7 +243,10 @@ newline    : ('\r'? '\n' | '\r')+
 ## Troubleshooting
 ### rJava fails to load
 This is likely an issue with the `JAVA_HOME` and `PATH` environment variables.
+
 In Windows environments, see [this reference](https://support.microsoft.com/en-us/help/3103813/qa-when-i-try-to-load-the-rjava-package-using-the-library-command-i-ge) for more troubleshooting steps.
-In Unix-like environments, try running `sudo R CMD javareconf`
+
+In Unix-like environments, try running `sudo R CMD javareconf` if `JAVA_HOME`
+and `PATH` are configured correctly.
 
 Enjoy! 🦌
