@@ -53,34 +53,34 @@ test_that("get ast from text input", {
 
 test_that("pretty print AST", {
 	rudolph <- Rudolph(
-		grammarFile		= system.file(
+		grammarFile     = system.file(
 			"inst", "TestGrammar.g4",
 			package = "rudolph"
 		),
-		rootNode		= "root",
+		rootNode        = "root",
 		sourceDirectory = getwd()
 	)
 
 	ast <- list(
-		value = list(
+		a = list(
 			list(
-				value = list(
-					list(value = 1),
-					list(value = 2)
+				b = list(
+					list(text = 1),
+					list(text = 2)
 				)
 			),
 			list(
-				value = list(
-					list(value = 3),
+				c = list(
+					list(text = 3),
 					list(
-						value = list(
-							list(value = 4)
+						d = list(
+							list(text = 4)
 						)
 					)
 				)
 			),
-			list(value = 5),
-			list(value = "<EOF>")
+			list(text = 5),
+			list(text = "<EOF>")
 		)
 	)
 
@@ -116,7 +116,7 @@ test_that("grammar lookup rule not found", {
 			"inst", "TestGrammar.g4",
 			package = "rudolph"
 		),
-		rootNode		= "root",
+		rootNode        = "root",
 		sourceDirectory = getwd()
 	)
 
