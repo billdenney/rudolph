@@ -34,8 +34,9 @@ test_that("errors if grammar file is not g4", {
 	expect_error(
 		Elf(
 			grammarFile = file.path(
-				dirname(dirname(base)),
-				"java/Rudolph.jar")
+				base,
+				"TestFile.txt"
+			)
 		),
 		"ANTLR grammar files must have a .g4 extension"
 	)
@@ -49,7 +50,7 @@ test_that("errors if javac is not found", {
 
 	expect_output(
 		generate(elf),
-		"Successfully created parser/lexer files in .+/rudolph/inst"
+		"Successfully created parser/lexer files in .+/rudolph"
 	)
 
 	systemErrors <- c(
@@ -84,7 +85,7 @@ test_that("does compile work", {
 
 	expect_output(
 		generate(elf),
-		"Successfully created parser/lexer files in .+/rudolph/inst"
+		"Successfully created parser/lexer files in .+/rudolph"
 	)
 	expect_output(
 		compile(elf),

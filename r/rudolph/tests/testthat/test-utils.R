@@ -4,10 +4,8 @@ base <- system.file("tests", "testthat", package = "rudolph")
 
 test_that("can parse grammar name from file ", {
 	expect_equal(
-		parseGrammarNameFromFile(
-			file.path(base, "TestGrammar.g4"),
+		parseGrammarNameFromFile(file.path(base, "TestGrammar.g4")),
 			"TestGrammar"
-		)
 	)
 })
 
