@@ -11,7 +11,7 @@ source('R/Utils.R')
 #' @slot wunorse A Java object reference to an instance of
 #' org.rudolph.elf.Wunorse.
 #'
-#' @export
+#' @export Elf
 Elf <- setClass(
 	"Elf",
 	slots = list(
@@ -39,6 +39,8 @@ Elf <- setClass(
 #' }
 #'
 #' @export
+#' @importFrom rJava .jaddClassPath .jnew
+#' @include Utils.R
 setMethod(
 	"initialize",
 	"Elf",
@@ -65,11 +67,11 @@ setMethod(
 		# Add destination directory and RudolphElf.jar to Java classpath
 		.Object@classPaths <- c(
 			.Object@destinationDirectory,
-			system.file("inst/java", "RudolphElf.jar", package = "rudolph")
+			system.file("java", "RudolphElf.jar", package = "rudolph")
 		)
-		.jaddClassPath(.Object@classPaths)
+		rJava::.jaddClassPath(.Object@classPaths)
 
-		.Object@wunorse <- .jnew("org.rudolph.elf.Wunorse")
+		.Object@wunorse <- rJava::.jnew("org.rudolph.elf.Wunorse")
 
 		return(.Object)
 	}
@@ -109,6 +111,7 @@ setMethod(
 #' }
 #'
 #' @export
+#' @importFrom rJava .jcall .jarray
 setGeneric(name = "generate", def = function(self) {
 	standardGeneric("generate")
 })
@@ -116,7 +119,7 @@ setMethod(
 	"generate",
 	"Elf",
 	function(self) {
-		.jcall(self@wunorse, "V", "main", .jarray(c(
+		rJava::.jcall(self@wunorse, "V", "main", rJava::.jarray(c(
 			self@grammarFile,
 			"-o", self@destinationDirectory
 		)))
@@ -147,24 +150,24 @@ setMethod(
 	"compile",
 	"Elf",
 	function(self) {
-		grammarFileWildMatch = paste(
-			parseGrammarNameFromFile(self@grammarFile), "*.java",
-			sep = ""
+		grammarFileWildMatch = paste0(
+			parseGrammarNameFromFile(self@grammarFile), "*.java"
 		)
-		sourceFiles = paste(
-			self@destinationDirectory, grammarFileWildMatch,
-			sep = "/"
+
+		sourceFiles = file.path(
+			self@destinationDirectory,
+			grammarFileWildMatch
 		)
-		classPathArg = paste(
-			"'", paste(self@classPaths, collapse = ":"), "'",
-			sep = ""
+
+		classPathArg = paste0(
+			'"', paste0(self@classPaths, collapse = .Platform$path.sep), '"'
 		)
 
 		# system2 warning messages are not very useful
 		result <- suppressWarnings(
 			system2(
 				"javac",
-				args   = paste("-cp", classPathArg, sourceFiles, sep = " "),
+				args   = c("-cp", classPathArg, sourceFiles),
 				stderr = TRUE,
 				stdout = TRUE
 			)

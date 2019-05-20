@@ -53,34 +53,34 @@ test_that("get ast from text input", {
 
 test_that("pretty print AST", {
 	rudolph <- Rudolph(
-		grammarFile		= system.file(
+		grammarFile     = system.file(
 			"inst", "TestGrammar.g4",
 			package = "rudolph"
 		),
-		rootNode		= "root",
+		rootNode        = "root",
 		sourceDirectory = getwd()
 	)
 
 	ast <- list(
-		value = list(
+		a = list(
 			list(
-				value = list(
-					list(value = 1),
-					list(value = 2)
+				b = list(
+					list(text = 1),
+					list(text = 2)
 				)
 			),
 			list(
-				value = list(
-					list(value = 3),
+				c = list(
+					list(text = 3),
 					list(
-						value = list(
-							list(value = 4)
+						d = list(
+							list(text = 4)
 						)
 					)
 				)
 			),
-			list(value = 5),
-			list(value = "<EOF>")
+			list(text = 5),
+			list(text = "<EOF>")
 		)
 	)
 
@@ -88,6 +88,138 @@ test_that("pretty print AST", {
 
 	expect_error(prettyPrint(rudolph), "Must specify ast")
 	expect_equal(prettyPrint(rudolph, ast), expectedOutput)
+})
+
+test_that("validate AST", {
+	rudolph <- Rudolph(
+		grammarFile     = system.file(
+			"inst", "TestGrammar.g4",
+			package = "rudolph"
+		),
+		rootNode        = "root",
+		sourceDirectory = getwd()
+	)
+
+	goodAST <- list(
+		root = list(
+			list(
+				line = list(
+					list(text = 1),
+					list(text = 2)
+				)
+			),
+			list(
+				line = list(
+					list(text = 3),
+					list(
+						name = list(
+							list(text = 4)
+						)
+					)
+				)
+			),
+			list(text = 5),
+			list(text = "<EOF>")
+		)
+	)
+
+	badAST1 <- list(
+		durr = list(
+			list(
+				line = list(
+					list(text = 1),
+					list(text = 2)
+				)
+			),
+			list(
+				line = list(
+					list(text = 3),
+					list(
+						name = list(
+							list(text = 4)
+						)
+					)
+				)
+			),
+			list(text = 5),
+			list(text = "<EOF>")
+		)
+	)
+
+	badAST2 <- list(
+		root = list(
+			list(
+				line = list(
+					list(text = 1),
+					list(text = 2)
+				)
+			),
+			list(
+				line = list(
+					list(text = 3),
+					list(
+						durr = list(
+							list(text = 4)
+						)
+					)
+				)
+			),
+			list(text = 5),
+			list(text = "<EOF>")
+		)
+	)
+
+	badAST3 <- list(
+		root = list(
+			list(
+				line = list(
+					list(text = 1),
+					list(text = 2)
+				)
+			),
+			list(
+				line = list(
+					list(text = 3),
+					list(
+						name = list(
+							list(text = 4)
+						)
+					)
+				)
+			),
+			list(durr = 5),
+			list(text = "<EOF>")
+		)
+	)
+
+	badAST4 <- list(
+		root = list(
+			list(
+				line = list(
+					list(text = 1),
+					list(text = 2)
+				)
+			),
+			list(
+				line = list(
+					list(text = 3),
+					list(
+						name = list(
+							list(durr = 4)
+						)
+					)
+				)
+			),
+			list(text = 5),
+			list(text = "<EOF>")
+		)
+	)
+
+	expect_equal(validateAST(rudolph, goodAST), TRUE)
+	expect_equal(validateAST(rudolph, badAST1), FALSE)
+	expect_equal(validateAST(rudolph, badAST2), FALSE)
+	expect_equal(validateAST(rudolph, badAST3), FALSE)
+	expect_equal(validateAST(rudolph, badAST4), FALSE)
 })
 
 test_that("grammar lookup", {
@@ -116,7 +248,7 @@ test_that("grammar lookup rule not found", {
 			"inst", "TestGrammar.g4",
 			package = "rudolph"
 		),
-		rootNode		= "root",
+		rootNode        = "root",
 		sourceDirectory = getwd()
 	)
 

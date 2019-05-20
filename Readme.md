@@ -1,5 +1,5 @@
 # Rudolph
-> *Rudolph's ANTLRs R stubby, but it doesn't mean he can't shine the way*
+> *Rudolph's ANTLRs R stubby, but it doesn't mean he can't light the way*
 
 ## Overview
 
@@ -25,10 +25,17 @@ precompiled ANTLR files. Below are working examples of Rudolph using
 TestGrammar.g4 file available in the package (destination and source directories
 aside).
 
+The source code of the implementation of ANTLR library is included in
+`r/rudolph/java` directory in accordance with [CRAN guidelines](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Non_002dR-scripts-in-packages). To recompile and
+use with Rudolph, copy the resulting `.jar` file into `r/rudolph/inst/java` and
+reload Rudolph.
+
 ## Requirements
-+ Java Development Kit 8+
-  + `java` and `javac` are both required
-+ R version 3.5.2+
+* Java Development Kit 8+ (Java 12 currently not supported)
+    * `java` and `javac` are both required
+    * Ensure `JAVA_HOME` environment variable is set appropriately
+    * Ensure `PATH` contains location(s) of `java` and `javac`
+* R version 3.5+
 
 ## Installation
 Rudolph is available on CRAN:
@@ -74,14 +81,74 @@ grammarFilePath = system.file(
 )
 
 rudolph <- Rudolph(
-	grammarFile 	= grammarFilePath,
-	rootNode 		= "root",
+	grammarFile     = grammarFilePath,
+	rootNode        = "root",
 	sourceDirectory = "/SOME/DIRECTORY"
 )
 
 ast <- getAST(rudolph, "santa SAYS: @rudolph with your nose so bright\n")
 
 print(ast)
+```
+
+### Composing Text from AST
+
+```r
+library("rudolph")
+
+grammarFilePath = system.file(
+	"inst",
+	"TestGrammar.g4",
+	package = "rudolph"
+)
+
+rudolph <- Rudolph(
+	grammarFile     = grammarFilePath,
+	rootNode        = "root",
+	# location of the compiled parser/lexer files
+	sourceDirectory = "/SOME/DIRECTORY"
+)
+
+ast <- getAST(rudolph, "santa SAYS: @rudolph with your nose so bright\n")
+
+# Modify the AST here
+
+prettyPrint(rudolph, ast)
+```
+
+Output:
+```
+[1] "santa SAYS: @rudolph with your nose so bright\n"
+```
+
+### Validate AST
+
+```r
+library("rudolph")
+
+grammarFilePath = system.file(
+	"inst",
+	"TestGrammar.g4",
+	package = "rudolph"
+)
+
+rudolph <- Rudolph(
+	grammarFile     = grammarFilePath,
+	rootNode        = "root",
+	# location of the compiled parser/lexer files
+	sourceDirectory = "/SOME/DIRECTORY"
+)
+
+ast <- getAST(rudolph, "santa SAYS: @rudolph with your nose so bright\n")
+
+# Modify the AST here
+
+validateAST(rudolph, ast)
+```
+
+Output:
+```
+[1] TRUE
 ```
 
 ### Performing Grammar Rule Lookups
@@ -96,8 +163,8 @@ grammarFilePath = system.file(
 )
 
 rudolph <- Rudolph(
-	grammarFile 	= grammarFilePath,
-	rootNode 		= "root",
+	grammarFile     = grammarFilePath,
+	rootNode        = "root",
 	# location of the compiled parser/lexer files
 	sourceDirectory = "/SOME/DIRECTORY"
 )
@@ -124,7 +191,7 @@ grammarFilePath = system.file(
 grammarLookup(grammarFilePath, "emoticon")
 ```
 
-### Composing Text from AST
+### Print grammar map
 
 ```r
 library("rudolph")
@@ -136,22 +203,50 @@ grammarFilePath = system.file(
 )
 
 rudolph <- Rudolph(
-	grammarFile 	= grammarFilePath,
-	rootNode 		= "root",
+	grammarFile     = grammarFilePath,
+	rootNode        = "root",
 	# location of the compiled parser/lexer files
 	sourceDirectory = "/SOME/DIRECTORY"
 )
 
-ast <- getAST(rudolph, "santa SAYS: @rudolph with your nose so bright\n")
-
-# Modify the AST here
-
-prettyPrint(rudolph, ast)
+printGrammarMap(rudolph)
 ```
 
 Output:
 ```
-[1] "santa SAYS: @rudolph with your nose so bright\n"
+root       : line+ EOF
+line       : name command message NEWLINE
+message    : (emoticon | link | color | mention | WORD | WHITESPACE)+
+name       : WORD WHITESPACE
+command    : (SAYS | SHOUTS) ':' WHITESPACE
+emoticon   : ':' '-'? ')' | ':' '-'? '('
+link       : TEXT TEXT
+color      : '/' WORD '/' message '/'
+mention    : '@' WORD
+a          : ('A'|'a')
+s          : ('S'|'s')
+y          : ('Y'|'y')
+h          : ('H'|'h')
+o          : ('O'|'o')
+u          : ('U'|'u')
+t          : ('T'|'t')
+lowercase  : [a-z]
+uppercase  : [A-Z]
+says       : S A Y S
+shouts     : S H O U T S
+text       : ('['|'(') .*? (']'|')')
+word       : (LOWERCASE | UPPERCASE | '_')+
+whitespace : (' ' | '\t')+
+newline    : ('\r'? '\n' | '\r')+
 ```
 
-Enjoy! 🦌
+## Troubleshooting
+### rJava fails to load
+This is likely an issue with the `JAVA_HOME` and `PATH` environment variables.
+
+In Windows environments, see [this reference](https://support.microsoft.com/en-us/help/3103813/qa-when-i-try-to-load-the-rjava-package-using-the-library-command-i-ge) for more troubleshooting steps.
+
+In Unix-like environments, try running `sudo R CMD javareconf` if `JAVA_HOME`
+and `PATH` are configured correctly.
+
+# Enjoy! 🦌

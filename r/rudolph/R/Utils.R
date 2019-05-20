@@ -1,12 +1,28 @@
 options(java.parameters = c('-Xmx500M'))
-library('rJava')
 
 #' initializeJVM
 #'
 #' Sets the working directory and initializes the JVM.
+#' @importFrom rJava .jpackage
 initializeJVM <- function() {
 	# Initialize the JVM
-	.jpackage("rudolph", lib.loc=find.package("rudolph"))
+	rJava::.jpackage("rudolph", lib.loc = find.package("rudolph"))
+
+	javaVersion <- .jcall(
+		"java/lang/System",
+		"S",
+		"getProperty",
+		"java.version"
+	)
+
+	if (grepl("^12", javaVersion)) {
+		stop(
+			paste(
+				"Java 12 currently not supported due to broken JNI support.",
+				"Use stable Java 8 - Java 11."
+			)
+		)
+	}
 }
 
 #' validateFile

@@ -44,16 +44,13 @@
 #' @examples
 #' \dontrun{
 #' ast <- list(
-#' 	type  = "parser",
 #' 	name  = "grammar rule name",
 #' 	value = list(
 #' 		list(
-#' 			type  = "lexer",
 #' 			name  = "grammar rule name 1",
 #' 			value = "grammar rule matched text 1"
 #' 		),
 #' 		list(
-#' 			type  = "lexer",
 #' 			name  = "grammar rule name 2",
 #' 			value = "grammar rule matched text 2"
 #' 		),
@@ -65,13 +62,6 @@
 #' @name Rudolph
 NULL
 
-library('jsonlite')
-library('readr')
-library('stringr')
-
-# Source the utils file
-source('R/Utils.R')
-
 #' An S4 class to represent an instance of Rudolph.
 #'
 #' @slot grammarFile A character vector of an absolute path to a .g4 grammar
@@ -82,7 +72,7 @@ source('R/Utils.R')
 #' @slot sourceDirectory A character vector of an absolute path to the directory
 #' the containing the compiled grammar files.
 #'
-#' @export
+#' @export Rudolph
 Rudolph <- setClass(
 	"Rudolph",
 	slots = list(
@@ -113,6 +103,8 @@ Rudolph <- setClass(
 #' }
 #'
 #' @export
+#' @importFrom rJava .jaddClassPath .jnew
+#' @include Utils.R
 setMethod(
 	"initialize",
 	"Rudolph",
@@ -134,16 +126,16 @@ setMethod(
 		initializeJVM()
 
 		# Add source directory and Rudolph.jar to Java classpath
-		.jaddClassPath(c(
+		rJava::.jaddClassPath(c(
 			normalizePath(sourceDirectory, mustWork = TRUE),
-			system.file("inst/java", "Rudolph.jar", package = "rudolph")
+			system.file("java", "Rudolph.jar", package = "rudolph")
 		))
 
 		# Parse out the grammar name
 		grammarName = parseGrammarNameFromFile(.Object@grammarFile)
 
 		# Create Rudolph Java instance
-		.Object@rudolph <- .jnew(
+		.Object@rudolph <- rJava::.jnew(
 			'org.rudolph.rudolph.Rudolph',
 			c(grammarName, rootNode)
 		)
@@ -168,6 +160,9 @@ setMethod(
 #' }
 #'
 #' @export
+#' @importFrom readr read_file
+#' @importFrom rJava .jcall
+#' @importFrom jsonlite parse_json
 setGeneric(name = "getAST", def = function(self, text, file) {
 	standardGeneric("getAST")
 })
@@ -182,17 +177,60 @@ setMethod(
 			stop("Either text or file should be specified, not both.")
 		}
 		else if (!missing(file)) {
-			input <- read_file(file)
+			input <- readr::read_file(file)
 		}
 		else {
 			input <- text
 		}
 
 		return(
-			parse_json(
-				.jcall(self@rudolph, returnSig = "S", "process", input)
+			jsonlite::parse_json(
+				rJava::.jcall(self@rudolph, returnSig = "S", "process", input)
 			)
 		)
+	}
+)
+
+#' validateAST
+#'
+#' Validates an AST in a basic way. Checks if AST only contains defined grammar
+#' rules in the instance grammar file. Does not check for grammar rule
+#' relationships.
+#'
+#' @return A logical vector. TRUE if the supplied AST only contains grammar
+#' rules defined in the grammar file, FALSE otherwise.
+#' \dontrun{
+#' validateAST(rudolph, ast)
+#' }
+#'
+#' @export
+setGeneric(name = "validateAST", def = function(self, ast) {
+	standardGeneric("validateAST")
+})
+setMethod(
+	"validateAST",
+	"Rudolph",
+	function(self, ast) {
+		if (missing(ast)) {
+			stop("Must specify ast.")
+		}
+
+		if (
+			is.null(self@grammarMap[[names(ast)[1]]])
+			&& is.null(ast[["text"]])
+		) {
+			return(FALSE)
+		}
+
+		if (!is.atomic(ast[[names(ast)[1]]])) {
+			for (node in ast[[names(ast)[1]]]) {
+				if (!validateAST(self, node)) {
+					return(FALSE)
+				}
+			}
+		}
+
+		return(TRUE)
 	}
 )
 
@@ -211,6 +249,7 @@ setMethod(
 #' }
 #'
 #' @export
+#' @importFrom readr write_file
 setGeneric(name = "prettyPrint", def = function(self, ast, file) {
 	standardGeneric("prettyPrint")
 })
@@ -223,13 +262,13 @@ setMethod(
 		}
 
 		output <- character(0)
-		if (is.atomic(ast[["value"]])) {
-			if (!grepl("<EOF>", ast[["value"]])) {
-				output <- ast[["value"]]
+		if (!is.null(ast[["text"]]) && is.atomic(ast[["text"]])) {
+			if (!grepl("<EOF>", ast[["text"]])) {
+				output <- ast[["text"]]
 			}
 		}
 		else {
-			for (node in ast[["value"]]) {
+			for (node in ast[[names(ast)[1]]]) {
 				output <- paste0(output, prettyPrint(self, node))
 			}
 		}
@@ -238,7 +277,7 @@ setMethod(
 			return(output)
 		}
 		else {
-			write_file(output, file)
+			readr::write_file(output, file)
 			return(NULL)
 		}
 	}
@@ -284,6 +323,8 @@ setMethod(
 #' \dontrun{
 #' getGrammarMap(rudolph)
 #' }
+#'
+#' @export
 setGeneric(name = "getGrammarMap", def = function(self) {
 	standardGeneric("getGrammarMap")
 })
@@ -304,6 +345,7 @@ setMethod(
 #' }
 #'
 #' @export
+#' @importFrom stringr str_pad
 setGeneric(name = "printGrammarMap", def = function(self) {
 	standardGeneric("printGrammarMap")
 })
@@ -317,7 +359,7 @@ setMethod(
 			cat(
 				sprintf(
 					"%s : %s",
-					str_pad(name, maxName, side = "right"),
+					stringr::str_pad(name, maxName, side = "right"),
 					self@grammarMap[[name]]
 				),
 				sep = "\n"

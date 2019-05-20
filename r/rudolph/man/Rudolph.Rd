@@ -60,16 +60,13 @@ The generated AST will be in the following format:
 \examples{
 \dontrun{
 ast <- list(
-	type  = "parser",
 	name  = "grammar rule name",
 	value = list(
 		list(
-			type  = "lexer",
 			name  = "grammar rule name 1",
 			value = "grammar rule matched text 1"
 		),
 		list(
-			type  = "lexer",
 			name  = "grammar rule name 2",
 			value = "grammar rule matched text 2"
 		),
