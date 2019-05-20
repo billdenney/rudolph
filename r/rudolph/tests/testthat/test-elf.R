@@ -9,7 +9,7 @@ teardown <- function() {
 	)
 	file.remove(
 		dir(
-			path       = base,
+			path       = dirname(dirname(base)),
 			pattern    = "TestGrammar*",
 			full.names = TRUE
 		)
