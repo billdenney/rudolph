@@ -51,7 +51,8 @@ install.packages("rudolph")
 library("rudolph")
 
 grammarFilePath = system.file(
-	"inst",
+	"tests",
+	"testthat",
 	"TestGrammar.g4",
 	package = "rudolph"
 )
@@ -75,7 +76,8 @@ Output:
 library("rudolph")
 
 grammarFilePath = system.file(
-	"inst",
+	"tests",
+	"testthat",
 	"TestGrammar.g4",
 	package = "rudolph"
 )
@@ -97,7 +99,8 @@ print(ast)
 library("rudolph")
 
 grammarFilePath = system.file(
-	"inst",
+	"tests",
+	"testthat",
 	"TestGrammar.g4",
 	package = "rudolph"
 )
@@ -127,7 +130,8 @@ Output:
 library("rudolph")
 
 grammarFilePath = system.file(
-	"inst",
+	"tests",
+	"testthat",
 	"TestGrammar.g4",
 	package = "rudolph"
 )
@@ -157,7 +161,8 @@ Output:
 library("rudolph")
 
 grammarFilePath = system.file(
-	"inst",
+	"tests",
+	"testthat",
 	"TestGrammar.g4",
 	package = "rudolph"
 )
@@ -183,7 +188,8 @@ Output:
 library("rudolph")
 
 grammarFilePath = system.file(
-	"inst",
+	"tests",
+	"testthat",
 	"TestGrammar.g4",
 	package = "rudolph"
 )
@@ -197,7 +203,8 @@ grammarLookup(grammarFilePath, "emoticon")
 library("rudolph")
 
 grammarFilePath = system.file(
-	"inst",
+	"tests",
+	"testthat",
 	"TestGrammar.g4",
 	package = "rudolph"
 )
@@ -250,6 +257,17 @@ library("devtools")
 # from /antlr/r/rudolph run
 devtools::test()
 ```
+
+### install
+
+```r
+# import devtools
+library("devtools")
+
+# from antlr/r
+devtools::install('rudolph')
+```
+
 
 ## Troubleshooting
 ### rJava fails to load
