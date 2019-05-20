@@ -1,6 +1,6 @@
 context("rudolph")
 
-base <- system.file("inst", package = "rudolph")
+base <- system.file("tests", "testthat", package = "rudolph")
 
 test_that("get ast from text input", {
 	expectedOutput <- list(
@@ -12,10 +12,7 @@ test_that("get ast from text input", {
 		.jnew = function(a, b) return(new("jobjRef")),
 		{
 			rudolph <- Rudolph(
-				grammarFile     = system.file(
-					"inst", "TestGrammar.g4",
-					package = "rudolph"
-				),
+				grammarFile     = file.path(base, "TestGrammar.g4"),
 				rootNode        = "santa",
 				sourceDirectory = getwd()
 			)
@@ -41,7 +38,7 @@ test_that("get ast from text input", {
 					expect_equal(
 						getAST(
 							rudolph,
-							file = paste0(base, "/TestFile.txt")
+							file = file.path(base, "TestFile.txt")
 						),
 						expectedOutput
 					)
@@ -53,10 +50,7 @@ test_that("get ast from text input", {
 
 test_that("pretty print AST", {
 	rudolph <- Rudolph(
-		grammarFile     = system.file(
-			"inst", "TestGrammar.g4",
-			package = "rudolph"
-		),
+		grammarFile     = file.path(base, "TestGrammar.g4"),
 		rootNode        = "root",
 		sourceDirectory = getwd()
 	)
@@ -92,10 +86,7 @@ test_that("pretty print AST", {
 
 test_that("validate AST", {
 	rudolph <- Rudolph(
-		grammarFile     = system.file(
-			"inst", "TestGrammar.g4",
-			package = "rudolph"
-		),
+		grammarFile     = file.path(base, "TestGrammar.g4"),
 		rootNode        = "root",
 		sourceDirectory = getwd()
 	)
@@ -224,10 +215,7 @@ test_that("validate AST", {
 
 test_that("grammar lookup", {
 	rudolph <- Rudolph(
-		grammarFile		= system.file(
-			"inst", "TestGrammar.g4",
-			package = "rudolph"
-		),
+		grammarFile		= file.path(base, "TestGrammar.g4"),
 		rootNode		= "root",
 		sourceDirectory = getwd()
 	)
@@ -244,10 +232,7 @@ test_that("grammar lookup", {
 
 test_that("grammar lookup rule not found", {
 	rudolph <- Rudolph(
-		grammarFile     = system.file(
-			"inst", "TestGrammar.g4",
-			package = "rudolph"
-		),
+		grammarFile     = file.path(base, "TestGrammar.g4"),
 		rootNode        = "root",
 		sourceDirectory = getwd()
 	)

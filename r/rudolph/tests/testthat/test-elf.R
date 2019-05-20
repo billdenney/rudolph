@@ -1,11 +1,11 @@
 context("elf")
 
-base <- system.file("inst", package = "rudolph")
+base <- system.file("tests", "testthat", package = "rudolph")
 
 teardown <- function() {
 	file.rename(
-		paste(base, "TestGrammar.g4", sep = "/"),
-		paste(base, "donotdelete", sep = "/")
+		file.path(base, "TestGrammar.g4"),
+		file.path(base, "donotdelete")
 	)
 	file.remove(
 		dir(
@@ -15,8 +15,8 @@ teardown <- function() {
 		)
 	)
 	file.rename(
-		paste(base, "donotdelete", sep = "/"),
-		paste(base, "TestGrammar.g4", sep = "/")
+		file.path(base, "donotdelete"),
+		file.path(base, "TestGrammar.g4")
 	)
 }
 
@@ -24,11 +24,7 @@ test_that("initialization works", {
 	expect_error(
 		Elf(
 			destinationDirectory = base,
-			grammarFile          = paste(
-				base,
-				"TestGrammar.g4",
-				sep = "/"
-			)
+			grammarFile          = file.path(base, "TestGrammar.g4")
 		),
 		NA
 	)
@@ -36,18 +32,19 @@ test_that("initialization works", {
 
 test_that("errors if grammar file is not g4", {
 	expect_error(
-		Elf(grammarFile = paste(base, "java/Rudolph.jar", sep = "/")),
+		Elf(
+			grammarFile = file.path(
+				dirname(dirname(base)),
+				"java/Rudolph.jar")
+		),
 		"ANTLR grammar files must have a .g4 extension"
 	)
 })
 
 test_that("errors if javac is not found", {
 	elf <- Elf(
-		destinationDirectory = base,
-		grammarFile          = paste(
-			base, "TestGrammar.g4",
-			sep = "/"
-		)
+		destinationDirectory = dirname(dirname(base)),
+		grammarFile          = file.path(base, "TestGrammar.g4")
 	)
 
 	expect_output(
@@ -81,11 +78,8 @@ test_that("errors if javac is not found", {
 
 test_that("does compile work", {
 	elf <- Elf(
-		destinationDirectory = base,
-		grammarFile          = paste(
-			base, "TestGrammar.g4",
-			sep = "/"
-		)
+		destinationDirectory = dirname(dirname(base)),
+		grammarFile          = file.path(base, "TestGrammar.g4")
 	)
 
 	expect_output(

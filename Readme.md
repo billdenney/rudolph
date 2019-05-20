@@ -239,6 +239,17 @@ word       : (LOWERCASE | UPPERCASE | '_')+
 whitespace : (' ' | '\t')+
 newline    : ('\r'? '\n' | '\r')+
 ```
+## Development
+
+### run tests
+
+```r
+# import devtools
+library("devtools")
+
+# from /antlr/r/rudolph run
+devtools::test()
+```
 
 ## Troubleshooting
 ### rJava fails to load
