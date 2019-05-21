@@ -16,3 +16,15 @@ test_that("getGrammarMap returns a map of the grammar", {
 	expect_equal(returnType, "list")
 	expect_equal(length(grammarMap), 24)
 })
+
+test_that("getGrammarMap works with seperate parser and lexer grammers", {
+	browser()
+	grammarMap = parseGrammarMap(
+		file.path(base, "TestGrammarLexer.g4"),
+		file.path(base, "TestGrammarParser.g4")
+	)
+	returnType = typeof(grammarMap)
+
+	expect_equal(returnType, "list")
+	expect_equal(length(grammarMap), 2)
+})

@@ -180,7 +180,7 @@ parseRuleName <- function(line) {
 
 # detects whether the ANTLR line is terminated.
 hasTerminator <- function(line) {
-	terminatorRegex = ";(?!')"
+	terminatorRegex = ";|}(?!')"
 	terminator =  getCaptureGroup(terminatorRegex, line, 1)
 	if (is.null(terminator)) {
 		return(FALSE)
@@ -217,10 +217,20 @@ isWhitespace <- function(line) {
 	}
 }
 
-# create a map from a grammar file
-parseGrammarMap <- function(grammarFile) {
+# create a map from a grammar file. grammar files can also be split
+# between two different files, one for the parser and one for the lexer.
+# The splitfile argument is optional and will parse, either a parser or a
+# lexer grammar
+parseGrammarMap <- function(grammarFile, splitFile) {
+	grammars   = c()
 	lines      = c()
 	grammarMap = list()
+	grammars   = c(grammars, grammarFile)
+
+	# if optional parser/lexer file supplied, add to map
+	if (!missing(splitFile)) {
+		grammars = c(grammars, splitFile)
+	}
 
 	# handles multiline comments /**/ by setting a flag at the opening
 	# comment tag (/*) and skipping every line in the file that is between
@@ -228,60 +238,63 @@ parseGrammarMap <- function(grammarFile) {
 	multiLineCommentFlag = FALSE
 	definition           = NULL
 
-	filePointer = file(grammarFile, "r")
+	for (grammar in grammars) {
 
-	# loops through the grammar file trying to find a specified rule
-	# returns the rule's definition
-	while (length(line) > 0) {
-		line = readLines(filePointer, n = 1)
-		line = trim(line)
+		filePointer = file(grammar, "r")
 
-		# if hits end of file without finding the grammar rule,
-		# break from while loop
-		if (identical(line, character(0))) {
-			break
-		}
+		# loops through the grammar file trying to find a specified rule
+		# returns the rule's definition
+		while (length(line) > 0) {
+			line = readLines(filePointer, n = 1)
+			line = trim(line)
 
-		line = stripInlineComments(line)
-
-		if (isMultiLineComment(line)) {
-			multiLineCommentFlag = !multiLineCommentFlag
-			next
-		}
-
-		if (multiLineCommentFlag | isWhitespace(line)) {
-			next
-		}
-
-		# only process a line once you have reached the ANTLR terminator ";"
-		if (hasTerminator(line)) {
-			if (length(lines) > 0) {
-				# append
-				lines = c(lines, line)
-				line = paste(lines, collapse = " ")
+			# if hits end of file without finding the grammar rule,
+			# break from while loop
+			if (identical(line, character(0))) {
+				break
 			}
 
-			ruleName = parseRuleName(line)
+			line = stripInlineComments(line)
 
-			# if line does not contain a rule, skip
-			if (is.null(ruleName)) {
+			if (isMultiLineComment(line)) {
+				multiLineCommentFlag = !multiLineCommentFlag
 				next
 			}
 
-			definition             = parseDefinition(line)
-			grammarMap[[ruleName]] = definition
+			if (multiLineCommentFlag | isWhitespace(line)) {
+				next
+			}
 
-			# reset lines
-			lines = c()
+			# only process a line once you have reached the ANTLR terminator ";"
+			if (hasTerminator(line)) {
+				if (length(lines) > 0) {
+					# append
+					lines = c(lines, line)
+					line = paste(lines, collapse = " ")
+				}
+
+				ruleName = parseRuleName(line)
+
+				# if line does not contain a rule, skip
+				if (is.null(ruleName)) {
+					next
+				}
+
+				definition             = parseDefinition(line)
+				grammarMap[[ruleName]] = definition
+
+				# reset lines
+				lines = c()
+			}
+			else {
+				# append
+				lines = c(lines, trim(line))
+				next
+			}
 		}
-		else {
-			# append
-			lines = c(lines, trim(line))
-			next
-		}
+
+		close(filePointer)
 	}
-
-	close(filePointer)
 
 	return(grammarMap)
 }

@@ -31,7 +31,7 @@ mention				: '@' WORD ;
  * Lexer Rules
  */
 
- fragment A			: ('A'|'a') ;
+fragment A			: ('A'|'a') ;
 fragment S			: ('S'|'s') ;
 fragment Y			: ('Y'|'y') ;
 fragment H			: ('H'|'h') ;
