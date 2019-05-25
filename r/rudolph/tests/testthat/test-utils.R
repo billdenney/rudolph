@@ -4,13 +4,13 @@ base <- system.file("tests", "testthat", package = "rudolph")
 
 test_that("can parse grammar name from file ", {
 	expect_equal(
-		parseGrammarNameFromFile(file.path(base, "TestGrammar.g4")),
+		parseGrammarNameFromFile(c(file.path(base, "TestGrammar.g4"))),
 			"TestGrammar"
 	)
 })
 
 test_that("getGrammarMap returns a map of the grammar", {
-	grammarMap = parseGrammarMap(file.path(base, "TestGrammar.g4"))
+	grammarMap = parseGrammarMap(c(file.path(base, "TestGrammar.g4")))
 	returnType = typeof(grammarMap)
 
 	expect_equal(returnType, "list")
@@ -18,10 +18,11 @@ test_that("getGrammarMap returns a map of the grammar", {
 })
 
 test_that("getGrammarMap works with seperate parser and lexer grammers", {
-	browser()
 	grammarMap = parseGrammarMap(
-		file.path(base, "TestGrammarLexer.g4"),
-		file.path(base, "TestGrammarParser.g4")
+		c(
+			file.path(base, "TestGrammarLexer.g4"),
+			file.path(base, "TestGrammarParser.g4")
+		)
 	)
 	returnType = typeof(grammarMap)
 

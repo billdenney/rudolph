@@ -6,8 +6,8 @@ source('R/Utils.R')
 #' @slot classPaths A list of character vectors of Java classpaths.
 #' @slot destinationDirectory A character vector of an absolute path to the
 #' directory where the generated and compiled files should be written to.
-#' @slot grammarFile A character vector of an absolute path to a .g4 grammar
-#' file.
+#' @slot grammarFiles A vector of absolute paths for .g4 grammar files.
+#' file
 #' @slot wunorse A Java object reference to an instance of
 #' org.rudolph.elf.Wunorse.
 #'
@@ -17,7 +17,7 @@ Elf <- setClass(
 	slots = list(
 		classPaths           = "character",
 		destinationDirectory = "character",
-		grammarFile          = "character",
+		grammarFiles         = "vector",
 		wunorse              = "jobjRef"
 	)
 )
@@ -27,14 +27,13 @@ Elf <- setClass(
 #' Sets the working directory, initializes the JVM and Rudolph Java instance.
 #' @param destinationDirectory A character vector of an absolute path to the
 #' directory where the generated and compiled files should be written to.
-#' @param grammarFile A character vector of an absolute path to a .g4 grammar
-#' file.
+#' @param grammarFiles A vector of absolute paths for .g4 grammar files.
 #' @keywords init, initialize
 #' @examples
 #' \dontrun{
 #' elf <- Elf(
 #' 	destinationDirectory = "/absolute/path/to/destination",
-#' 	grammarFile          = "/absolute/path/to/grammar.g4"
+#' 	grammarFiles         = c("/absolute/path/to/grammar.g4")
 #' )
 #' }
 #'
@@ -47,19 +46,19 @@ setMethod(
 	function(
 		.Object,
 		destinationDirectory = character(0),
-		grammarFile          = character(0)
+		grammarFiles         = c()
 	) {
 		.Object@destinationDirectory = normalizePath(
 			destinationDirectory,
 			mustWork = TRUE
 		)
-		.Object@grammarFile = normalizePath(
-			grammarFile,
+		.Object@grammarFiles = normalizePath(
+			grammarFiles,
 			mustWork = TRUE
 		)
 
 		# Validate grammar file
-		validateFile(.Object@grammarFile)
+		validateFile(.Object@grammarFiles)
 
 		# Initialize the JVM
 		initializeJVM()
@@ -120,7 +119,7 @@ setMethod(
 	"Elf",
 	function(self) {
 		rJava::.jcall(self@wunorse, "V", "main", rJava::.jarray(c(
-			self@grammarFile,
+			paste(self@grammarFiles, collapse = " "),
 			"-o", self@destinationDirectory
 		)))
 

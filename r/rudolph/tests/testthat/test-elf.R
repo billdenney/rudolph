@@ -24,7 +24,7 @@ test_that("initialization works", {
 	expect_error(
 		Elf(
 			destinationDirectory = base,
-			grammarFile          = file.path(base, "TestGrammar.g4")
+			grammarFiles         = c(file.path(base, "TestGrammar.g4"))
 		),
 		NA
 	)
@@ -33,9 +33,11 @@ test_that("initialization works", {
 test_that("errors if grammar file is not g4", {
 	expect_error(
 		Elf(
-			grammarFile = file.path(
-				base,
-				"TestFile.txt"
+			grammarFiles = c(
+				file.path(
+					base,
+					"TestFile.txt"
+				)
 			)
 		),
 		"ANTLR grammar files must have a .g4 extension"
@@ -45,7 +47,7 @@ test_that("errors if grammar file is not g4", {
 test_that("errors if javac is not found", {
 	elf <- Elf(
 		destinationDirectory = dirname(dirname(base)),
-		grammarFile          = file.path(base, "TestGrammar.g4")
+		grammarFiles         = c(file.path(base, "TestGrammar.g4"))
 	)
 
 	expect_output(
@@ -80,7 +82,7 @@ test_that("errors if javac is not found", {
 test_that("does compile work", {
 	elf <- Elf(
 		destinationDirectory = dirname(dirname(base)),
-		grammarFile          = file.path(base, "TestGrammar.g4")
+		grammarFiles         = c(file.path(base, "TestGrammar.g4"))
 	)
 
 	expect_output(

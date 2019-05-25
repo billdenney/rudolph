@@ -29,15 +29,17 @@ initializeJVM <- function() {
 #'
 #' Checks to see if the file extension for given file is .g4 and that the file
 #' exists.
-validateFile <- function(grammarFile) {
-	# Validate file extension
-	fileExtension = substr(
-		grammarFile,
-		nchar(grammarFile) - 2,
-		nchar(grammarFile)
-	)
-	if (fileExtension != '.g4') {
-		stop("ANTLR grammar files must have a .g4 extension.")
+validateFile <- function(grammarFiles) {
+	for (grammarFile in grammarFiles) {
+		# Validate file extension
+		fileExtension = substr(
+			grammarFile,
+			nchar(grammarFile) - 2,
+			nchar(grammarFile)
+		)
+		if (fileExtension != '.g4') {
+			stop("ANTLR grammar files must have a .g4 extension.")
+		}
 	}
 }
 
@@ -221,16 +223,9 @@ isWhitespace <- function(line) {
 # between two different files, one for the parser and one for the lexer.
 # The splitfile argument is optional and will parse, either a parser or a
 # lexer grammar
-parseGrammarMap <- function(grammarFile, splitFile) {
-	grammars   = c()
+parseGrammarMap <- function(grammars) {
 	lines      = c()
 	grammarMap = list()
-	grammars   = c(grammars, grammarFile)
-
-	# if optional parser/lexer file supplied, add to map
-	if (!missing(splitFile)) {
-		grammars = c(grammars, splitFile)
-	}
 
 	# handles multiline comments /**/ by setting a flag at the opening
 	# comment tag (/*) and skipping every line in the file that is between
@@ -239,18 +234,20 @@ parseGrammarMap <- function(grammarFile, splitFile) {
 	definition           = NULL
 
 	for (grammar in grammars) {
-
 		filePointer = file(grammar, "r")
+		line        = readLines(filePointer, n = 1)
 
 		# loops through the grammar file trying to find a specified rule
 		# returns the rule's definition
 		while (length(line) > 0) {
+
 			line = readLines(filePointer, n = 1)
 			line = trim(line)
 
-			# if hits end of file without finding the grammar rule,
+			# if hits end of file,
 			# break from while loop
 			if (identical(line, character(0))) {
+				close(filePointer)
 				break
 			}
 
@@ -268,6 +265,7 @@ parseGrammarMap <- function(grammarFile, splitFile) {
 			# only process a line once you have reached the ANTLR terminator ";"
 			if (hasTerminator(line)) {
 				if (length(lines) > 0) {
+
 					# append
 					lines = c(lines, line)
 					line = paste(lines, collapse = " ")
@@ -277,6 +275,9 @@ parseGrammarMap <- function(grammarFile, splitFile) {
 
 				# if line does not contain a rule, skip
 				if (is.null(ruleName)) {
+
+					# reset lines
+					lines = c()
 					next
 				}
 
@@ -292,8 +293,6 @@ parseGrammarMap <- function(grammarFile, splitFile) {
 				next
 			}
 		}
-
-		close(filePointer)
 	}
 
 	return(grammarMap)

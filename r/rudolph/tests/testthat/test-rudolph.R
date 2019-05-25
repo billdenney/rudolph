@@ -12,7 +12,7 @@ test_that("get ast from text input", {
 		.jnew = function(a, b) return(new("jobjRef")),
 		{
 			rudolph <- Rudolph(
-				grammarFile     = file.path(base, "TestGrammar.g4"),
+				grammarFiles    = c(file.path(base, "TestGrammar.g4")),
 				rootNode        = "santa",
 				sourceDirectory = getwd()
 			)
@@ -50,7 +50,7 @@ test_that("get ast from text input", {
 
 test_that("pretty print AST", {
 	rudolph <- Rudolph(
-		grammarFile     = file.path(base, "TestGrammar.g4"),
+		grammarFiles     = c(file.path(base, "TestGrammar.g4")),
 		rootNode        = "root",
 		sourceDirectory = getwd()
 	)
@@ -86,7 +86,7 @@ test_that("pretty print AST", {
 
 test_that("validate AST", {
 	rudolph <- Rudolph(
-		grammarFile     = file.path(base, "TestGrammar.g4"),
+		grammarFiles    = c(file.path(base, "TestGrammar.g4")),
 		rootNode        = "root",
 		sourceDirectory = getwd()
 	)
@@ -215,7 +215,7 @@ test_that("validate AST", {
 
 test_that("grammar lookup", {
 	rudolph <- Rudolph(
-		grammarFile		= file.path(base, "TestGrammar.g4"),
+		grammarFiles	= c(file.path(base, "TestGrammar.g4")),
 		rootNode		= "root",
 		sourceDirectory = getwd()
 	)
@@ -232,7 +232,7 @@ test_that("grammar lookup", {
 
 test_that("grammar lookup rule not found", {
 	rudolph <- Rudolph(
-		grammarFile     = file.path(base, "TestGrammar.g4"),
+		grammarFiles    = c(file.path(base, "TestGrammar.g4")),
 		rootNode        = "root",
 		sourceDirectory = getwd()
 	)

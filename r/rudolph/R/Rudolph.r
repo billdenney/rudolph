@@ -64,8 +64,7 @@ NULL
 
 #' An S4 class to represent an instance of Rudolph.
 #'
-#' @slot grammarFile A character vector of an absolute path to a .g4 grammar
-#' file.
+#' @slot grammarFiles A vector of absolute paths for .g4 grammar files.
 #' @slot rootNode A character vector of the root node of the grammar.
 #' @slot rudolph A Java object reference to an instance of
 #' org.rudolph.rudolph.Rudolph.
@@ -76,7 +75,7 @@ NULL
 Rudolph <- setClass(
 	"Rudolph",
 	slots = list(
-		grammarFile     = "character",
+		grammarFiles    = "character",
 		grammarMap      = "list",
 		rootNode        = "character",
 		rudolph         = "jobjRef",
@@ -87,7 +86,8 @@ Rudolph <- setClass(
 #' initialize
 #'
 #' Sets the working directory, initializes the JVM and Rudolph Java instance.
-#' @param grammarFile File path to .g4 grammar file. Must be an absolute path.
+#' @param grammarFiles list of file paths to .g4 grammar file. Must be an
+#' absolute path.
 #' @param rootNode Root node of the grammar, informs ANTLR where the grammar
 #' rules begin.
 #' @param sourceDirectory Path to source files. Source files are compiled Java
@@ -96,7 +96,7 @@ Rudolph <- setClass(
 #' @examples
 #' \dontrun{
 #' rudolph <- Rudolph(
-#' 	grammarFile     = "/absolute/path/to/grammar.g4",
+#' 	grammarFiles     = c("/absolute/path/to/grammar.g4"),
 #' 	rootNode        = "grammarroot",
 #' 	sourceDirectory = "/absolute/path/to/source"
 #' )
@@ -110,17 +110,19 @@ setMethod(
 	"Rudolph",
 	function(
 		.Object,
-		grammarFile     = character(0),
+		grammarFiles    = c(),
 		rootNode        = character(0),
 		sourceDirectory = character(0)
 	) {
-		.Object@grammarFile = normalizePath(grammarFile, mustWork = TRUE)
+		.Object@grammarFiles = normalizePath(grammarFiles, mustWork = TRUE)
 
 		# Validate grammar file
-		validateFile(.Object@grammarFile)
+		validateFile(.Object@grammarFiles)
 
 		# Create map of grammar file
-		.Object@grammarMap = parseGrammarMap(.Object@grammarFile)
+		.Object@grammarMap = parseGrammarMap(
+			.Object@grammarFiles
+		)
 
 		# Initialize the JVM
 		initializeJVM()
@@ -132,7 +134,8 @@ setMethod(
 		))
 
 		# Parse out the grammar name
-		grammarName = parseGrammarNameFromFile(.Object@grammarFile)
+		# TODO: How to handle this for two files
+		grammarName = parseGrammarNameFromFile(.Object@grammarFiles)
 
 		# Create Rudolph Java instance
 		.Object@rudolph <- rJava::.jnew(
@@ -306,7 +309,12 @@ setMethod(
 		definition = self@grammarMap[[ruleName]]
 
 		if (is.null(definition)) {
-			stop(paste(ruleName, "not found in grammar:", self@grammarFile))
+			message = paste(
+				ruleName,
+				"not found in grammar:",
+				paste(self@grammarFiles, collapse = ", ")
+			)
+			stop(message)
 		}
 		else {
 			return(definition)
