@@ -17,7 +17,7 @@ For more details on ANTLR, see <https://github.com/antlr/antlr4>.
 
 This package provides 2 S4 classes: Elf and Rudolph. Elf is a helper class
 responsible for generating and compiling parser and lexer files given a .g4
-grammar file. Rudolph is the main class responsible for generating the AST and
+grammar file(s). Rudolph is the main class responsible for generating the AST and
 composing the AST back to text.
 
 The most common use of Rudolph is to supply a grammar file and input text using
@@ -59,7 +59,7 @@ grammarFilePath = system.file(
 elf <- Elf(
 	# where to save the generated compiled parser/lexer files
 	destinationDirectory = "/SOME/DIRECTORY",
-	grammarFile          = grammarFilePath
+	grammarFiles         = c(grammarFilePath)
 )
 generateAndCompile(elf)
 ```
@@ -83,7 +83,7 @@ grammarFilePath = system.file(
 )
 
 rudolph <- Rudolph(
-	grammarFile     = grammarFilePath,
+	grammarFiles    = c(grammarFilePath),
 	rootNode        = "root",
 	sourceDirectory = "/SOME/DIRECTORY"
 )
@@ -106,7 +106,7 @@ grammarFilePath = system.file(
 )
 
 rudolph <- Rudolph(
-	grammarFile     = grammarFilePath,
+	grammarFiles    = c(grammarFilePath),
 	rootNode        = "root",
 	# location of the compiled parser/lexer files
 	sourceDirectory = "/SOME/DIRECTORY"
@@ -137,7 +137,7 @@ grammarFilePath = system.file(
 )
 
 rudolph <- Rudolph(
-	grammarFile     = grammarFilePath,
+	grammarFiles    = c(grammarFilePath),
 	rootNode        = "root",
 	# location of the compiled parser/lexer files
 	sourceDirectory = "/SOME/DIRECTORY"
@@ -168,7 +168,7 @@ grammarFilePath = system.file(
 )
 
 rudolph <- Rudolph(
-	grammarFile     = grammarFilePath,
+	grammarFiles    = c(grammarFilePath),
 	rootNode        = "root",
 	# location of the compiled parser/lexer files
 	sourceDirectory = "/SOME/DIRECTORY"
@@ -180,21 +180,6 @@ print(grammarLookup(rudolph, "root"))
 Output:
 ```
 [1] "line+ EOF"
-```
-
-### Lookup in Raw Grammar File
-
-```r
-library("rudolph")
-
-grammarFilePath = system.file(
-	"tests",
-	"testthat",
-	"TestGrammar.g4",
-	package = "rudolph"
-)
-
-grammarLookup(grammarFilePath, "emoticon")
 ```
 
 ### Print grammar map
@@ -210,7 +195,7 @@ grammarFilePath = system.file(
 )
 
 rudolph <- Rudolph(
-	grammarFile     = grammarFilePath,
+	grammarFiles    = c(grammarFilePath),
 	rootNode        = "root",
 	# location of the compiled parser/lexer files
 	sourceDirectory = "/SOME/DIRECTORY"
