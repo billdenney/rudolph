@@ -150,7 +150,7 @@ setMethod(
 	"Elf",
 	function(self) {
 		grammarFileWildMatch = paste0(
-			parseGrammarNameFromFile(self@grammarFile), "*.java"
+			parseGrammarNameFromFile(self@grammarFiles), "*.java"
 		)
 
 		sourceFiles = file.path(
