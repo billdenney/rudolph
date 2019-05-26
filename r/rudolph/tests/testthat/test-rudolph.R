@@ -14,7 +14,8 @@ test_that("get ast from text input", {
 			rudolph <- Rudolph(
 				grammarFiles    = c(file.path(base, "TestGrammar.g4")),
 				rootNode        = "santa",
-				sourceDirectory = getwd()
+				sourceDirectory = getwd(),
+				lexerName       = "TestGrammar"
 			)
 
 			expect_error(getAST(rudolph), "Must specify text or file")
@@ -51,8 +52,9 @@ test_that("get ast from text input", {
 test_that("pretty print AST", {
 	rudolph <- Rudolph(
 		grammarFiles     = c(file.path(base, "TestGrammar.g4")),
-		rootNode        = "root",
-		sourceDirectory = getwd()
+		rootNode         = "root",
+		sourceDirectory  = getwd(),
+		lexerName        = "TestGrammar"
 	)
 
 	ast <- list(
@@ -88,7 +90,8 @@ test_that("validate AST", {
 	rudolph <- Rudolph(
 		grammarFiles    = c(file.path(base, "TestGrammar.g4")),
 		rootNode        = "root",
-		sourceDirectory = getwd()
+		sourceDirectory = getwd(),
+		lexerName       = "TestGrammar"
 	)
 
 	goodAST <- list(
@@ -217,7 +220,8 @@ test_that("grammar lookup", {
 	rudolph <- Rudolph(
 		grammarFiles	= c(file.path(base, "TestGrammar.g4")),
 		rootNode		= "root",
-		sourceDirectory = getwd()
+		sourceDirectory = getwd(),
+		lexerName       = "TestGrammar"
 	)
 
 	definition <- grammarLookup(rudolph, "name")
@@ -234,7 +238,8 @@ test_that("grammar lookup rule not found", {
 	rudolph <- Rudolph(
 		grammarFiles    = c(file.path(base, "TestGrammar.g4")),
 		rootNode        = "root",
-		sourceDirectory = getwd()
+		sourceDirectory = getwd(),
+		lexerName       = "TestGrammar"
 	)
 
 	expect_error(

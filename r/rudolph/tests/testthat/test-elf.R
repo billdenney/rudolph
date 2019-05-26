@@ -1,6 +1,7 @@
 context("elf")
 
-base <- system.file("tests", "testthat", package = "rudolph")
+base        <- system.file("tests", "testthat", package = "rudolph")
+destination <- file.path(base, "temp")
 
 teardown <- function() {
 	file.rename(
@@ -23,8 +24,9 @@ teardown <- function() {
 test_that("initialization works", {
 	expect_error(
 		Elf(
-			destinationDirectory = base,
-			grammarFiles         = c(file.path(base, "TestGrammar.g4"))
+			destinationDirectory = destination,
+			grammarFiles         = c(file.path(base, "TestGrammar.g4")),
+			lexerName            = "TestGrammar"
 		),
 		NA
 	)
@@ -46,8 +48,9 @@ test_that("errors if grammar file is not g4", {
 
 test_that("errors if javac is not found", {
 	elf <- Elf(
-		destinationDirectory = dirname(dirname(base)),
-		grammarFiles         = c(file.path(base, "TestGrammar.g4"))
+		destinationDirectory = destination,
+		grammarFiles         = c(file.path(base, "TestGrammar.g4")),
+		lexerName            = "TestGrammar"
 	)
 
 	expect_output(
@@ -81,8 +84,9 @@ test_that("errors if javac is not found", {
 
 test_that("does compile work", {
 	elf <- Elf(
-		destinationDirectory = dirname(dirname(base)),
-		grammarFiles         = c(file.path(base, "TestGrammar.g4"))
+		destinationDirectory = destination,
+		grammarFiles         = c(file.path(base, "TestGrammar.g4")),
+		lexerName            = "TestGrammar"
 	)
 
 	expect_output(

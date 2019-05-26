@@ -8,8 +8,10 @@ source('R/Utils.R')
 #' directory where the generated and compiled files should be written to.
 #' @slot grammarFiles A vector of absolute paths for .g4 grammar files.
 #' file
-#' @slot lexerName A character vector of the lexer file name.
-#' @slot parserName A character vector of the parser file name.
+#' @slot lexerName A character vector of the lexer file name. If a parserName is
+#' not seperately supplied, it is assumed that the parserName is the same as the
+#' lexer name.
+#' @slot parserName A character vector of the parser file name. not required.
 #' @slot wunorse A Java object reference to an instance of
 #' org.rudolph.elf.Wunorse.
 #'
@@ -20,8 +22,8 @@ Elf <- setClass(
 		classPaths           = "character",
 		destinationDirectory = "character",
 		grammarFiles         = "vector",
-		parserName           = "character",
 		lexerName            = "character",
+		parserName           = "character",
 		wunorse              = "jobjRef"
 	)
 )
@@ -51,8 +53,8 @@ setMethod(
 		.Object,
 		destinationDirectory = character(0),
 		grammarFiles         = c(),
-		parserName           = character(0),
-		lexerName            = character(0)
+		lexerName            = character(0),
+		parserName           = character(0)
 	) {
 		.Object@destinationDirectory = normalizePath(
 			destinationDirectory,
@@ -62,8 +64,14 @@ setMethod(
 			grammarFiles,
 			mustWork = TRUE
 		)
-		.Object@parserName           = parserName
 		.Object@lexerName            = lexerName
+
+		if (missing(parserName)) {
+			.Object@parserName = lexerName
+		}
+		else {
+			.Object@parserName = parserName
+		}
 
 		# Validate grammar file
 		validateFile(.Object@grammarFiles)
@@ -135,10 +143,11 @@ setMethod(
 				)
 			)
 		))
+
 		validateGeneratedParserLexerFiles(
 			self@destinationDirectory,
-			self@parserName,
-			self@lexerName
+			self@lexerName,
+			self@parserName
 		)
 		print(paste(
 			"Successfully created parser/lexer files in",
@@ -166,9 +175,7 @@ setMethod(
 	"compile",
 	"Elf",
 	function(self) {
-		grammarFileWildMatch = paste0(
-			parseGrammarNameFromFile(self@grammarFiles), "*.java"
-		)
+		grammarFileWildMatch = "*.java"
 
 		sourceFiles = file.path(
 			self@destinationDirectory,

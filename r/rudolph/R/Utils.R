@@ -45,20 +45,22 @@ validateFile <- function(grammarFiles) {
 
 # validate only one parser and one lexer supplied
 
-validateGeneratedParserLexerFiles <- function(destinationDirectory, parserName, lexerName) {
-	file_names = list.files(destinationDirectory)
-	regex      = '.+?(?=\\.|Base|Listener)'
+validateGeneratedParserLexerFiles <- function(destinationDirectory, lexerName, parserName) {
+	fileNames = list.files(destinationDirectory)
+	fileRegex = "(.+?)(?=\\.|Base|Listener|Lexer|Parser)"
+	lexerName  = getCaptureGroup("(.+?)(parser|lexer|$)", tolower(lexerName), 1)
+	parserName = getCaptureGroup("(.+?)(parser|lexer|$)", tolower(parserName), 1)
 
-	for (file_name in file_names) {
-		name = getCaptureGroup(regex, file_name, 1)
+	for (fileName in fileNames) {
+		name = getCaptureGroup(fileRegex, fileName, 1)
 
 		if (is.null(name)) {
-			warning(paste('Unknown parser/lexer file type found:', file_name))
+			warning(paste('Unknown parser/lexer file type found:', fileName))
 		}
-		else if (tolower(name) == tolower(parserName)) {
+		else if (tolower(name) == parserName) {
 			next
 		}
-		else if (tolower(name) == tolower(lexerName)) {
+		else if (tolower(name) == lexerName) {
 			next
 		}
 		else {
