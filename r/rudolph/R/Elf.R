@@ -8,6 +8,8 @@ source('R/Utils.R')
 #' directory where the generated and compiled files should be written to.
 #' @slot grammarFiles A vector of absolute paths for .g4 grammar files.
 #' file
+#' @slot lexerName A character vector of the lexer file name.
+#' @slot parserName A character vector of the parser file name.
 #' @slot wunorse A Java object reference to an instance of
 #' org.rudolph.elf.Wunorse.
 #'
@@ -18,6 +20,8 @@ Elf <- setClass(
 		classPaths           = "character",
 		destinationDirectory = "character",
 		grammarFiles         = "vector",
+		parserName           = "character",
+		lexerName            = "character",
 		wunorse              = "jobjRef"
 	)
 )
@@ -46,16 +50,20 @@ setMethod(
 	function(
 		.Object,
 		destinationDirectory = character(0),
-		grammarFiles         = c()
+		grammarFiles         = c(),
+		parserName           = character(0),
+		lexerName            = character(0)
 	) {
 		.Object@destinationDirectory = normalizePath(
 			destinationDirectory,
 			mustWork = TRUE
 		)
-		.Object@grammarFiles = normalizePath(
+		.Object@grammarFiles         = normalizePath(
 			grammarFiles,
 			mustWork = TRUE
 		)
+		.Object@parserName           = parserName
+		.Object@lexerName            = lexerName
 
 		# Validate grammar file
 		validateFile(.Object@grammarFiles)
@@ -118,11 +126,20 @@ setMethod(
 	"generate",
 	"Elf",
 	function(self) {
-		rJava::.jcall(self@wunorse, "V", "main", rJava::.jarray(c(
-			paste(self@grammarFiles, collapse = " "),
-			"-o", self@destinationDirectory
-		)))
-
+		rJava::.jcall(self@wunorse, "V", "main", rJava::.jarray(
+			unlist(
+				c(
+					self@grammarFiles,
+					"-o",
+					self@destinationDirectory
+				)
+			)
+		))
+		validateGeneratedParserLexerFiles(
+			self@destinationDirectory,
+			self@parserName,
+			self@lexerName
+		)
 		print(paste(
 			"Successfully created parser/lexer files in",
 			self@destinationDirectory,

@@ -43,6 +43,42 @@ validateFile <- function(grammarFiles) {
 	}
 }
 
+# validate only one parser and one lexer supplied
+
+validateGeneratedParserLexerFiles <- function(destinationDirectory, parserName, lexerName) {
+	file_names = list.files(destinationDirectory)
+	regex      = '.+?(?=\\.|Base|Listener)'
+
+	for (file_name in file_names) {
+		name = getCaptureGroup(regex, file_name, 1)
+
+		if (is.null(name)) {
+			warning(paste('Unknown parser/lexer file type found:', file_name))
+		}
+		else if (tolower(name) == tolower(parserName)) {
+			next
+		}
+		else if (tolower(name) == tolower(lexerName)) {
+			next
+		}
+		else {
+			stop(
+				paste0(
+					"'",
+					name,
+					"'",
+					" does not match either the parser name, '",
+					parserName,
+					"' or the lexer name, '",
+					lexerName,
+					"'"
+				)
+			)
+		}
+
+	}
+}
+
 #' parseGrammarNameFromFile
 #'
 #' Given a file path, parse out the name of the grammar.
@@ -139,7 +175,7 @@ getCaptureGroup <- function(r, s, group_number) {
 		return(NULL)
 	}
 	else {
-		return(value)
+		return(value[group_number])
 	}
 }
 
