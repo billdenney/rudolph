@@ -148,7 +148,7 @@ setMethod(
 		# Create Rudolph Java instance
 		.Object@rudolph <- rJava::.jnew(
 			'org.rudolph.rudolph.Rudolph',
-			c(lexerName, rootNode)
+			c(rootNode, lexerName, parserName)
 		)
 
 		return(.Object)

@@ -24,12 +24,20 @@ public class Rudolph {
 	private static Class<? extends Parser> parserClass;
 	private static Vocabulary vocabulary;
 
-	private String grammarName;
+	private String lexerPrefix;
+	private String parserPrefix;
 	private String startRuleName;
 
 	private Rudolph(String[] args) {
-		grammarName   = args[0];
-		startRuleName = args[1];
+		startRuleName = args[0];
+		lexerPrefix   = args[1];
+
+		if (args.length > 2) {
+			parserPrefix = args[2];
+		}
+		else {
+			parserPrefix = lexerPrefix;
+		}
 
 		try {
 			initialize();
@@ -40,7 +48,7 @@ public class Rudolph {
 	}
 
 	private String initialize() throws Exception {
-		String lexerName = grammarName + "Lexer";
+		String lexerName = lexerPrefix + "Lexer";
 		ClassLoader cl = Thread.currentThread().getContextClassLoader();
 		Class<? extends Lexer> lexerClass = null;
 		try {
@@ -48,7 +56,7 @@ public class Rudolph {
 		}
 		catch (java.lang.ClassNotFoundException cnfe) {
 			// might be pure lexer grammar; no Lexer suffix then
-			lexerName = grammarName;
+			lexerName = lexerPrefix;
 			try {
 				lexerClass = cl.loadClass(lexerName).asSubclass(Lexer.class);
 			}
@@ -66,7 +74,7 @@ public class Rudolph {
 		lexer.removeErrorListeners();
 		lexer.addErrorListener(RConsoleErrorListener.INSTANCE);
 
-		String parserName = grammarName + "Parser";
+		String parserName = parserPrefix + "Parser";
 		parserClass = cl.loadClass(parserName).asSubclass(Parser.class);
 		Constructor<? extends Parser> parserConstructor = parserClass.getConstructor(TokenStream.class);
 		parser = parserConstructor.newInstance((TokenStream)null);
