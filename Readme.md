@@ -59,7 +59,8 @@ grammarFilePath = system.file(
 elf <- Elf(
 	# where to save the generated compiled parser/lexer files
 	destinationDirectory = "/SOME/DIRECTORY",
-	grammarFiles         = c(grammarFilePath)
+	grammarFiles         = c(grammarFilePath),
+	lexerName            = "TestGrammar"
 )
 generateAndCompile(elf)
 ```
@@ -85,7 +86,8 @@ grammarFilePath = system.file(
 rudolph <- Rudolph(
 	grammarFiles    = c(grammarFilePath),
 	rootNode        = "root",
-	sourceDirectory = "/SOME/DIRECTORY"
+	sourceDirectory = "/SOME/DIRECTORY",
+	lexerName       = "TestGrammar"
 )
 
 ast <- getAST(rudolph, "santa SAYS: @rudolph with your nose so bright\n")
@@ -109,7 +111,8 @@ rudolph <- Rudolph(
 	grammarFiles    = c(grammarFilePath),
 	rootNode        = "root",
 	# location of the compiled parser/lexer files
-	sourceDirectory = "/SOME/DIRECTORY"
+	sourceDirectory = "/SOME/DIRECTORY",
+	lexerName       = "TestGrammar"
 )
 
 ast <- getAST(rudolph, "santa SAYS: @rudolph with your nose so bright\n")
@@ -140,7 +143,8 @@ rudolph <- Rudolph(
 	grammarFiles    = c(grammarFilePath),
 	rootNode        = "root",
 	# location of the compiled parser/lexer files
-	sourceDirectory = "/SOME/DIRECTORY"
+	sourceDirectory = "/SOME/DIRECTORY",
+	lexerName       = "TestGrammar"
 )
 
 ast <- getAST(rudolph, "santa SAYS: @rudolph with your nose so bright\n")
@@ -171,7 +175,8 @@ rudolph <- Rudolph(
 	grammarFiles    = c(grammarFilePath),
 	rootNode        = "root",
 	# location of the compiled parser/lexer files
-	sourceDirectory = "/SOME/DIRECTORY"
+	sourceDirectory = "/SOME/DIRECTORY",
+	lexerName       = "TestGrammar"
 )
 
 print(grammarLookup(rudolph, "root"))
@@ -198,7 +203,8 @@ rudolph <- Rudolph(
 	grammarFiles    = c(grammarFilePath),
 	rootNode        = "root",
 	# location of the compiled parser/lexer files
-	sourceDirectory = "/SOME/DIRECTORY"
+	sourceDirectory = "/SOME/DIRECTORY",
+	lexerName       = "TestGrammar"
 )
 
 printGrammarMap(rudolph)
