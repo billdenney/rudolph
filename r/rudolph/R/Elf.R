@@ -39,7 +39,8 @@ Elf <- setClass(
 #' \dontrun{
 #' elf <- Elf(
 #' 	destinationDirectory = "/absolute/path/to/destination",
-#' 	grammarFiles         = c("/absolute/path/to/grammar.g4")
+#' 	grammarFiles         = c("/absolute/path/to/grammar.g4"),
+#' 	lexerName            = "grammar"
 #' )
 #' }
 #'

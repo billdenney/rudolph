@@ -108,7 +108,8 @@ Rudolph <- setClass(
 #' rudolph <- Rudolph(
 #' 	grammarFiles     = c("/absolute/path/to/grammar.g4"),
 #' 	rootNode        = "grammarroot",
-#' 	sourceDirectory = "/absolute/path/to/source"
+#' 	sourceDirectory = "/absolute/path/to/source",
+#' 	lexerName       = "grammar"
 #' )
 #' }
 #'
