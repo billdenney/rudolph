@@ -29,6 +29,9 @@ initializeJVM <- function() {
 #'
 #' Checks to see if the file extension for given file is .g4 and that the file
 #' exists.
+#'
+#' @param grammarFiles A vector of absolute paths for .g4 grammar files.
+#'
 #' @importFrom tools file_ext
 validateFile <- function(grammarFiles) {
   if (!all(sapply(X=grammarFiles, FUN=tools::file_ext) == "g4")) {
@@ -77,6 +80,9 @@ validateGeneratedParserLexerFiles <- function(destinationDirectory, lexerName, p
 #' parseGrammarNameFromFile
 #'
 #' Given a file path, parse out the name of the grammar.
+#' @param grammarFiles A vector of absolute paths for .g4 grammar files.
+#' @return A vector of grammar files without the .g4 extensions
+#' @noRd
 parseGrammarNameFromFile <- function(grammarFile) {
 	match = regexpr("(\\w+)\\.g4", grammarFile, perl = TRUE)
 

@@ -7,16 +7,21 @@
 grammarLookup(self, ruleName)
 }
 \arguments{
+\item{self}{A Rudolph object}
+
 \item{ruleName}{Character vector containing name of grammar rule.}
 }
 \value{
 A character vector representating a grammar definition (lexer or
 parser).
-\dontrun{
-grammarLookup(rudolph, "emoticon")
-}
 }
 \description{
 Performs a lookup in the grammar file supplied at initialization. For a given
 rule, returns the definition.
+}
+\examples{
+\dontrun{
+grammarLookup(rudolph, "emoticon")
+}
+
 }

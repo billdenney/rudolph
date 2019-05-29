@@ -6,6 +6,9 @@
 \usage{
 generateAndCompile(self)
 }
+\arguments{
+\item{self}{An Elf object}
+}
 \value{
 Not meaningful.
 }

@@ -6,13 +6,19 @@
 \usage{
 getGrammarMap(self)
 }
+\arguments{
+\item{self}{A Rudolph object}
+}
 \value{
 A named list. Rule names are the keys and the values are the
 definitions.
-\dontrun{
-getGrammarMap(rudolph)
-}
 }
 \description{
 Returns a named list parsed from the grammar file supplied at initialization.
+}
+\examples{
+\dontrun{
+getGrammarMap(rudolph)
+}
+
 }

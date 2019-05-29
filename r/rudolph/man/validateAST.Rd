@@ -6,15 +6,23 @@
 \usage{
 validateAST(self, ast)
 }
+\arguments{
+\item{self}{A Rudolph object}
+
+\item{ast}{The nested list to validate.}
+}
 \value{
 A logical vector. TRUE if the supplied AST only contains grammar
-rules defined in the grammar file, FALSE otherwise.
-\dontrun{
-validateAST(rudolph, ast)
-}
+  rules defined in the grammar file, FALSE otherwise.
 }
 \description{
 Validates an AST in a basic way. Checks if AST only contains defined grammar
 rules in the instance grammar file. Does not check for grammar rule
 relationships.
+}
+\examples{
+\dontrun{
+  validateAST(rudolph, ast)
+}
+
 }
