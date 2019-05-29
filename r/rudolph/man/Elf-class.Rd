@@ -16,8 +16,14 @@ An S4 class to represent Elf.
 \item{\code{destinationDirectory}}{A character vector of an absolute path to the
 directory where the generated and compiled files should be written to.}
 
-\item{\code{grammarFile}}{A character vector of an absolute path to a .g4 grammar
-file.}
+\item{\code{grammarFiles}}{A vector of absolute paths for .g4 grammar files.
+file}
+
+\item{\code{lexerName}}{A character vector of the lexer file name. If a parserName is
+not seperately supplied, it is assumed that the parserName is the same as the
+lexer name.}
+
+\item{\code{parserName}}{A character vector of the parser file name. not required.}
 
 \item{\code{wunorse}}{A Java object reference to an instance of
 org.rudolph.elf.Wunorse.}

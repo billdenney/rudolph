@@ -4,7 +4,7 @@
 \alias{validateFile}
 \title{validateFile}
 \usage{
-validateFile(grammarFile)
+validateFile(grammarFiles)
 }
 \description{
 Checks to see if the file extension for given file is .g4 and that the file

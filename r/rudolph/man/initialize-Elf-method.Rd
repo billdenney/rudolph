@@ -6,14 +6,14 @@
 \title{initialize}
 \usage{
 \S4method{initialize}{Elf}(.Object, destinationDirectory = character(0),
-  grammarFile = character(0))
+  grammarFiles = c(), lexerName = character(0),
+  parserName = character(0))
 }
 \arguments{
 \item{destinationDirectory}{A character vector of an absolute path to the
 directory where the generated and compiled files should be written to.}
 
-\item{grammarFile}{A character vector of an absolute path to a .g4 grammar
-file.}
+\item{grammarFiles}{A vector of absolute paths for .g4 grammar files.}
 }
 \description{
 Sets the working directory, initializes the JVM and Rudolph Java instance.
@@ -22,7 +22,8 @@ Sets the working directory, initializes the JVM and Rudolph Java instance.
 \dontrun{
 elf <- Elf(
 	destinationDirectory = "/absolute/path/to/destination",
-	grammarFile          = "/absolute/path/to/grammar.g4"
+	grammarFiles         = c("/absolute/path/to/grammar.g4"),
+	lexerName            = "grammar"
 )
 }
 
