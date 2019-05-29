@@ -8,11 +8,12 @@ Depends:
     jsonlite,
     readr,
     rJava,
-    stringr
+    stringr,
+    tools
 License: TBD
 LazyData: true
 RoxygenNote: 6.1.1
 Collate: 
     'Utils.R'
     'Elf.R'
-    'Rudolph.r'
+    'Rudolph.R'

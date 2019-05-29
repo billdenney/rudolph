@@ -29,18 +29,11 @@ initializeJVM <- function() {
 #'
 #' Checks to see if the file extension for given file is .g4 and that the file
 #' exists.
+#' @importFrom tools file_ext
 validateFile <- function(grammarFiles) {
-	for (grammarFile in grammarFiles) {
-		# Validate file extension
-		fileExtension = substr(
-			grammarFile,
-			nchar(grammarFile) - 2,
-			nchar(grammarFile)
-		)
-		if (fileExtension != '.g4') {
-			stop("ANTLR grammar files must have a .g4 extension.")
-		}
-	}
+  if (!all(sapply(X=grammarFiles, FUN=tools::file_ext) == "g4")) {
+    stop("ANTLR grammar files must have a .g4 extension.")
+  }
 }
 
 # validate only one parser and one lexer supplied
@@ -122,9 +115,6 @@ getErrorInfo <- function(object) {
 	return(errorMap[type])
 }
 
-# returns string w/o leading or trailing whitespace
-trim <- function(x) { gsub("^\\s+|\\s+$", "", x) }
-
 # remove inline comments from every line
 stripInlineComments <- function(line) {
 	inlineCommentRegex = "\\s*[\\/]{2}.*$"
@@ -189,12 +179,12 @@ parseDefinition <- function(line) {
 		return(NULL)
 	}
 	else {
-		return(trim(definition))
+		return(trimws(definition))
 	}
 }
 
 ignoreANTLRFragment <- function(line) {
-	line          = trim(line)
+	line          = trimws(line)
 	fragmentRegex = "^fragment\\s+(.*:)"
 	rule          = getCaptureGroup(fragmentRegex, line, 1)
 
@@ -203,7 +193,7 @@ ignoreANTLRFragment <- function(line) {
 		return(line)
 	}
 
-	return(trim(rule))
+	return(trimws(rule))
 }
 # for a given grammar entry, parses out the rule
 parseRuleName <- function(line) {
@@ -214,7 +204,7 @@ parseRuleName <- function(line) {
 		return(NULL)
 	}
 	else {
-		return(tolower(trim(rule)))
+		return(tolower(trimws(rule)))
 	}
 }
 
@@ -280,7 +270,7 @@ parseGrammarMap <- function(grammars) {
 		while (length(line) > 0) {
 
 			line = readLines(filePointer, n = 1)
-			line = trim(line)
+			line = trimws(line)
 
 			# if hits end of file,
 			# break from while loop
@@ -327,7 +317,7 @@ parseGrammarMap <- function(grammars) {
 			}
 			else {
 				# append
-				lines = c(lines, trim(line))
+				lines = c(lines, trimws(line))
 				next
 			}
 		}
