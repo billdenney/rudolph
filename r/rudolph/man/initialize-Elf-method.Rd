@@ -14,6 +14,9 @@
 directory where the generated and compiled files should be written to.}
 
 \item{grammarFiles}{A vector of absolute paths for .g4 grammar files.}
+
+\item{lexerName, parserName}{The name of the lexer and parser from the grammar
+files.}
 }
 \description{
 Sets the working directory, initializes the JVM and Rudolph Java instance.

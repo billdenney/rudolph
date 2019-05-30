@@ -7,6 +7,8 @@
 prettyPrint(self, ast, file)
 }
 \arguments{
+\item{self}{A Rudolph object}
+
 \item{ast}{A nested list representing an AST.}
 
 \item{file}{Character vector containing file name}
@@ -14,12 +16,15 @@ prettyPrint(self, ast, file)
 \value{
 A character vector representating composed data from the AST, or NULL
 if \code{file} is specified.
-\dontrun{
-prettyPrint(rudolph, ast, file = "output.txt")
-}
 }
 \description{
 Takes an abstract syntax tree (AST) and naively composes a character vector
 from the contents. Optionally outputs generated character vector to a named
 file.
+}
+\examples{
+\dontrun{
+prettyPrint(rudolph, ast, file = "output.txt")
+}
+
 }

@@ -7,7 +7,6 @@ source('R/Utils.R')
 #' @slot destinationDirectory A character vector of an absolute path to the
 #' directory where the generated and compiled files should be written to.
 #' @slot grammarFiles A vector of absolute paths for .g4 grammar files.
-#' file
 #' @slot lexerName A character vector of the lexer file name. If a parserName is
 #' not seperately supplied, it is assumed that the parserName is the same as the
 #' lexer name.
@@ -32,8 +31,10 @@ Elf <- setClass(
 #'
 #' Sets the working directory, initializes the JVM and Rudolph Java instance.
 #' @param destinationDirectory A character vector of an absolute path to the
-#' directory where the generated and compiled files should be written to.
+#'   directory where the generated and compiled files should be written to.
 #' @param grammarFiles A vector of absolute paths for .g4 grammar files.
+#' @param lexerName,parserName The name of the lexer and parser from the grammar
+#'   files.
 #' @keywords init, initialize
 #' @examples
 #' \dontrun{
@@ -97,6 +98,8 @@ setMethod(
 #'
 #' Generates and compiles parser/lexer Java files using ANTLR and \code{javac}.
 #'
+#' @param self An Elf object
+#'
 #' @return Not meaningful.
 #' @examples
 #' \dontrun{
@@ -119,6 +122,8 @@ setMethod(
 #' generate
 #'
 #' Generates parser/lexer Java files using ANTLR.
+#'
+#' @param self An Elf object
 #'
 #' @return Not meaningful.
 #' @examples
@@ -160,6 +165,8 @@ setMethod(
 #' compile
 #'
 #' Compiles generated parser/lexer Java files using \code{javac}.
+#'
+#' @param self An Elf object
 #'
 #' @return Not meaningful.
 #' @examples

@@ -16,8 +16,7 @@ An S4 class to represent Elf.
 \item{\code{destinationDirectory}}{A character vector of an absolute path to the
 directory where the generated and compiled files should be written to.}
 
-\item{\code{grammarFiles}}{A vector of absolute paths for .g4 grammar files.
-file}
+\item{\code{grammarFiles}}{A vector of absolute paths for .g4 grammar files.}
 
 \item{\code{lexerName}}{A character vector of the lexer file name. If a parserName is
 not seperately supplied, it is assumed that the parserName is the same as the

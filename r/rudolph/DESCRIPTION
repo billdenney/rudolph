@@ -6,10 +6,13 @@ Description: The Rudolph package is a light wrapper around a simple implementati
 Depends:
     R (>= 3.1.2),
     jsonlite,
+    methods,
     readr,
     rJava,
     stringr,
     tools
+Suggests:
+    testthat
 License: TBD
 LazyData: true
 RoxygenNote: 6.1.1

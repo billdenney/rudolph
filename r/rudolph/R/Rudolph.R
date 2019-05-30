@@ -161,6 +161,7 @@ setMethod(
 #' Generates an abstract syntax tree (AST) from a grammar. The AST returned is a
 #' nested list. Only one of \code{text} or \code{file} should be specified.
 #'
+#' @param self A Rudolph object
 #' @param text Character vector containing text to be parsed into an AST.
 #' @param file Character vector containing file name, contents of which to be
 #' parsed into an AST.
@@ -209,10 +210,15 @@ setMethod(
 #' rules in the instance grammar file. Does not check for grammar rule
 #' relationships.
 #'
+#' @param self A Rudolph object
+#' @param ast The nested list to validate.
+#'
 #' @return A logical vector. TRUE if the supplied AST only contains grammar
-#' rules defined in the grammar file, FALSE otherwise.
+#'   rules defined in the grammar file, FALSE otherwise.
+#'   
+#' @examples
 #' \dontrun{
-#' validateAST(rudolph, ast)
+#'   validateAST(rudolph, ast)
 #' }
 #'
 #' @export
@@ -252,10 +258,13 @@ setMethod(
 #' from the contents. Optionally outputs generated character vector to a named
 #' file.
 #'
+#' @param self A Rudolph object
 #' @param ast A nested list representing an AST.
 #' @param file Character vector containing file name
 #' @return A character vector representating composed data from the AST, or NULL
 #' if \code{file} is specified.
+#' 
+#' @examples
 #' \dontrun{
 #' prettyPrint(rudolph, ast, file = "output.txt")
 #' }
@@ -300,9 +309,12 @@ setMethod(
 #' Performs a lookup in the grammar file supplied at initialization. For a given
 #' rule, returns the definition.
 #'
+#' @param self A Rudolph object
 #' @param ruleName Character vector containing name of grammar rule.
 #' @return A character vector representating a grammar definition (lexer or
 #' parser).
+#' 
+#' @examples
 #' \dontrun{
 #' grammarLookup(rudolph, "emoticon")
 #' }
@@ -335,8 +347,12 @@ setMethod(
 #'
 #' Returns a named list parsed from the grammar file supplied at initialization.
 #'
+#' @param self A Rudolph object
+#'
 #' @return A named list. Rule names are the keys and the values are the
 #' definitions.
+#' 
+#' @examples
 #' \dontrun{
 #' getGrammarMap(rudolph)
 #' }
@@ -357,6 +373,9 @@ setMethod(
 #'
 #' Prints a named list parsed from the grammar file supplied at initialization.
 #'
+#' @param self A Rudolph object
+#'
+#' @examples
 #' \dontrun{
 #' printGrammarMap(rudolph)
 #' }

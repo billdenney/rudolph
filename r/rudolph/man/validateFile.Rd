@@ -6,6 +6,9 @@
 \usage{
 validateFile(grammarFiles)
 }
+\arguments{
+\item{grammarFiles}{A vector of absolute paths for .g4 grammar files.}
+}
 \description{
 Checks to see if the file extension for given file is .g4 and that the file
 exists.

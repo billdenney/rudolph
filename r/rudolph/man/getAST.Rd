@@ -7,6 +7,8 @@
 getAST(self, text, file)
 }
 \arguments{
+\item{self}{A Rudolph object}
+
 \item{text}{Character vector containing text to be parsed into an AST.}
 
 \item{file}{Character vector containing file name, contents of which to be

@@ -6,11 +6,15 @@
 \usage{
 printGrammarMap(self)
 }
+\arguments{
+\item{self}{A Rudolph object}
+}
 \description{
 Prints a named list parsed from the grammar file supplied at initialization.
 }
-\details{
+\examples{
 \dontrun{
 printGrammarMap(rudolph)
 }
+
 }
