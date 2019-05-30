@@ -150,10 +150,9 @@ setMethod(
 			self@lexerName,
 			self@parserName
 		)
-		print(paste(
+		message(paste(
 			"Successfully created parser/lexer files in",
-			self@destinationDirectory,
-			sep = " "
+			self@destinationDirectory
 		))
 	}
 )
@@ -207,6 +206,6 @@ setMethod(
 			)
 		}
 
-		print("Parser/lexer compilation complete")
+		message("Parser/lexer compilation complete")
 	}
 )
