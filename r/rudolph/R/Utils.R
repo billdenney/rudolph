@@ -34,9 +34,9 @@ initializeJVM <- function() {
 #'
 #' @importFrom tools file_ext
 validateFile <- function(grammarFiles) {
-  if (!all(sapply(X=grammarFiles, FUN=tools::file_ext) == "g4")) {
-    stop("ANTLR grammar files must have a .g4 extension.")
-  }
+	if (!all(sapply(X=grammarFiles, FUN=tools::file_ext) == "g4")) {
+		stop("ANTLR grammar files must have a .g4 extension.")
+	}
 }
 
 # validate only one parser and one lexer supplied
