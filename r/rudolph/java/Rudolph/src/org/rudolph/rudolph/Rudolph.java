@@ -62,8 +62,9 @@ public class Rudolph {
 			}
 			catch (ClassNotFoundException cnfe2) {
 				System.err.println(
-						"Can't load " + lexerName + " as lexer (or parser)."
-						+ " Compiled java files (.class files) not found."
+						"Can't load " + lexerName + " as lexer: "
+								+ "Compiled java files (.class files) not found for '"
+								+ lexerPrefix + "' or '" + lexerPrefix + "Lexer'."
 				);
 				return "ERROR";
 			}
@@ -86,8 +87,9 @@ public class Rudolph {
 			}
 			catch (ClassNotFoundException cnfe2) {
 				System.err.println(
-						"Can't load " + parserName + " as parser."
-								+ " Compiled java files (.class files) not found."
+						"Can't load " + parserName + " as parser: "
+								+ "Compiled java files (.class files) not found for '"
+								+ parserPrefix + "' or '" + parserPrefix + "Parser'."
 				);
 				return "ERROR";
 			}
