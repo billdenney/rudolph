@@ -16,7 +16,7 @@ parsed into an AST.}
 }
 \value{
 A nested list representing \code{text} or contents of \code{file}
-parsed into an AST.
+  parsed into an AST.
 }
 \description{
 Generates an abstract syntax tree (AST) from a grammar. The AST returned is a

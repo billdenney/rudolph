@@ -15,7 +15,7 @@ prettyPrint(self, ast, file)
 }
 \value{
 A character vector representating composed data from the AST, or NULL
-if \code{file} is specified.
+  if \code{file} is specified.
 }
 \description{
 Takes an abstract syntax tree (AST) and naively composes a character vector

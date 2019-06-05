@@ -21,10 +21,13 @@ org.rudolph.rudolph.Rudolph.}
 \item{\code{sourceDirectory}}{A character vector of an absolute path to the directory
 the containing the compiled grammar files.}
 
-\item{\code{lexerName}}{A character vector of the lexer file name. If a parserName is
-not seperately supplied, it is assumed that the parserName is the same as the
-lexer name.}
+\item{\code{lexerPrefix}}{A character vector of the lexer file name prefix. E.g. If
+the file name is "Grammar.g4" or "GrammarLexer.g4", this would be
+"Grammar". If a parserPrefix is not supplied, it is assumed parserPrefix is
+the same as the lexerPrefix.}
 
-\item{\code{parserName}}{A character vector of the parser file name. not required.}
+\item{\code{parserPrefix}}{A character vector of the parser file name prefix. E.g. If
+the file name is "Grammar.g4" or "GrammarParser.g4", this would be
+"Grammar". Not required.}
 }}
 

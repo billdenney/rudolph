@@ -13,7 +13,7 @@ grammarLookup(self, ruleName)
 }
 \value{
 A character vector representating a grammar definition (lexer or
-parser).
+  parser).
 }
 \description{
 Performs a lookup in the grammar file supplied at initialization. For a given

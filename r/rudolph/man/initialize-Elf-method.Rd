@@ -6,8 +6,8 @@
 \title{initialize}
 \usage{
 \S4method{initialize}{Elf}(.Object, destinationDirectory = character(0),
-  grammarFiles = c(), lexerName = character(0),
-  parserName = character(0))
+  grammarFiles = c(), lexerPrefix = character(0),
+  parserPrefix = character(0))
 }
 \arguments{
 \item{destinationDirectory}{A character vector of an absolute path to the
@@ -15,8 +15,14 @@ directory where the generated and compiled files should be written to.}
 
 \item{grammarFiles}{A vector of absolute paths for .g4 grammar files.}
 
-\item{lexerName, parserName}{The name of the lexer and parser from the grammar
-files.}
+\item{lexerPrefix}{A character vector of the lexer file name prefix. E.g. If
+the file name is "Grammar.g4" or "GrammarLexer.g4", this would be
+"Grammar". If a parserPrefix is not supplied, it is assumed parserPrefix is
+the same as the lexerPrefix.}
+
+\item{parserPrefix}{A character vector of the parser file name prefix. E.g.
+If the file name is "Grammar.g4" or "GrammarParser.g4", this would be
+"Grammar". Not required.}
 }
 \description{
 Sets the working directory, initializes the JVM and Rudolph Java instance.
@@ -26,7 +32,7 @@ Sets the working directory, initializes the JVM and Rudolph Java instance.
 elf <- Elf(
 	destinationDirectory = "/absolute/path/to/destination",
 	grammarFiles         = c("/absolute/path/to/grammar.g4"),
-	lexerName            = "grammar"
+	lexerPrefix          = "grammar"
 )
 }
 

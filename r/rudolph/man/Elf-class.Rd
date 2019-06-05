@@ -18,11 +18,14 @@ directory where the generated and compiled files should be written to.}
 
 \item{\code{grammarFiles}}{A vector of absolute paths for .g4 grammar files.}
 
-\item{\code{lexerName}}{A character vector of the lexer file name. If a parserName is
-not seperately supplied, it is assumed that the parserName is the same as the
-lexer name.}
+\item{\code{lexerPrefix}}{A character vector of the lexer file name prefix. E.g. If
+the file name is "Grammar.g4" or "GrammarLexer.g4", this would be
+"Grammar". If a parserPrefix is not supplied, it is assumed parserPrefix is
+the same as the lexerPrefix.}
 
-\item{\code{parserName}}{A character vector of the parser file name. not required.}
+\item{\code{parserPrefix}}{A character vector of the parser file name prefix. E.g. If
+the file name is "Grammar.g4" or "GrammarParser.g4", this would be
+"Grammar". Not required.}
 
 \item{\code{wunorse}}{A Java object reference to an instance of
 org.rudolph.elf.Wunorse.}

@@ -62,7 +62,7 @@ public class Rudolph {
 			}
 			catch (ClassNotFoundException cnfe2) {
 				System.err.println(
-						"Can't load " + lexerName + " as lexer or parser."
+						"Can't load " + lexerName + " as lexer (or parser)."
 						+ " Compiled java files (.class files) not found."
 				);
 				return "ERROR";
@@ -75,7 +75,24 @@ public class Rudolph {
 		lexer.addErrorListener(RConsoleErrorListener.INSTANCE);
 
 		String parserName = parserPrefix + "Parser";
-		parserClass = cl.loadClass(parserName).asSubclass(Parser.class);
+		try {
+			parserClass = cl.loadClass(parserName).asSubclass(Parser.class);
+		}
+		catch (java.lang.ClassNotFoundException cnfe) {
+			// full parser name might be given as prefix
+			parserName = parserPrefix;
+			try {
+				parserClass = cl.loadClass(parserName).asSubclass(Parser.class);
+			}
+			catch (ClassNotFoundException cnfe2) {
+				System.err.println(
+						"Can't load " + parserName + " as parser."
+								+ " Compiled java files (.class files) not found."
+				);
+				return "ERROR";
+			}
+		}
+
 		Constructor<? extends Parser> parserConstructor = parserClass.getConstructor(TokenStream.class);
 		parser = parserConstructor.newInstance((TokenStream)null);
 		parser.removeErrorListeners();

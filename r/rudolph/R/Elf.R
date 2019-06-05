@@ -5,14 +5,17 @@ source('R/Utils.R')
 #'
 #' @slot classPaths A list of character vectors of Java classpaths.
 #' @slot destinationDirectory A character vector of an absolute path to the
-#' directory where the generated and compiled files should be written to.
+#'   directory where the generated and compiled files should be written to.
 #' @slot grammarFiles A vector of absolute paths for .g4 grammar files.
-#' @slot lexerName A character vector of the lexer file name. If a parserName is
-#' not seperately supplied, it is assumed that the parserName is the same as the
-#' lexer name.
-#' @slot parserName A character vector of the parser file name. not required.
+#' @slot lexerPrefix A character vector of the lexer file name prefix. E.g. If
+#'   the file name is "Grammar.g4" or "GrammarLexer.g4", this would be
+#'   "Grammar". If a parserPrefix is not supplied, it is assumed parserPrefix is
+#'   the same as the lexerPrefix.
+#' @slot parserPrefix A character vector of the parser file name prefix. E.g. If
+#'   the file name is "Grammar.g4" or "GrammarParser.g4", this would be
+#'   "Grammar". Not required.
 #' @slot wunorse A Java object reference to an instance of
-#' org.rudolph.elf.Wunorse.
+#'   org.rudolph.elf.Wunorse.
 #'
 #' @export Elf
 Elf <- setClass(
@@ -21,8 +24,8 @@ Elf <- setClass(
 		classPaths           = "character",
 		destinationDirectory = "character",
 		grammarFiles         = "vector",
-		lexerName            = "character",
-		parserName           = "character",
+		lexerPrefix          = "character",
+		parserPrefix         = "character",
 		wunorse              = "jobjRef"
 	)
 )
@@ -33,15 +36,20 @@ Elf <- setClass(
 #' @param destinationDirectory A character vector of an absolute path to the
 #'   directory where the generated and compiled files should be written to.
 #' @param grammarFiles A vector of absolute paths for .g4 grammar files.
-#' @param lexerName,parserName The name of the lexer and parser from the grammar
-#'   files.
+#' @param lexerPrefix A character vector of the lexer file name prefix. E.g. If
+#'   the file name is "Grammar.g4" or "GrammarLexer.g4", this would be
+#'   "Grammar". If a parserPrefix is not supplied, it is assumed parserPrefix is
+#'   the same as the lexerPrefix.
+#' @param parserPrefix A character vector of the parser file name prefix. E.g.
+#'   If the file name is "Grammar.g4" or "GrammarParser.g4", this would be
+#'   "Grammar". Not required.
 #' @keywords init, initialize
 #' @examples
 #' \dontrun{
 #' elf <- Elf(
 #' 	destinationDirectory = "/absolute/path/to/destination",
 #' 	grammarFiles         = c("/absolute/path/to/grammar.g4"),
-#' 	lexerName            = "grammar"
+#' 	lexerPrefix          = "grammar"
 #' )
 #' }
 #'
@@ -55,8 +63,8 @@ setMethod(
 		.Object,
 		destinationDirectory = character(0),
 		grammarFiles         = c(),
-		lexerName            = character(0),
-		parserName           = character(0)
+		lexerPrefix          = character(0),
+		parserPrefix         = character(0)
 	) {
 		.Object@destinationDirectory = normalizePath(
 			destinationDirectory,
@@ -66,13 +74,13 @@ setMethod(
 			grammarFiles,
 			mustWork = TRUE
 		)
-		.Object@lexerName            = lexerName
+		.Object@lexerPrefix          = lexerPrefix
 
-		if (missing(parserName)) {
-			.Object@parserName = lexerName
+		if (missing(parserPrefix)) {
+			.Object@parserPrefix = lexerPrefix
 		}
 		else {
-			.Object@parserName = parserName
+			.Object@parserPrefix = parserPrefix
 		}
 
 		# Validate grammar file
@@ -152,8 +160,8 @@ setMethod(
 
 		validateGeneratedParserLexerFiles(
 			self@destinationDirectory,
-			self@lexerName,
-			self@parserName
+			self@lexerPrefix,
+			self@parserPrefix
 		)
 		message(paste(
 			"Successfully created parser/lexer files in",
